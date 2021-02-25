@@ -1,6 +1,6 @@
 import express from 'express';
-import morgan from '../middlewares/morgan.js';
-import router from '../routes/index.js';
+import morgan from './middlewares/morgan.js';
+import router from './routes/index.js';
 import cors from 'cors';
 import path from 'path';
 
