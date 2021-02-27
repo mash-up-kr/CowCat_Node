@@ -1,9 +1,9 @@
-import Sequelize from 'sequelize'
+import Sequelize from 'sequelize';
 import fs from 'fs';
 import path from 'path';
 
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,12 +12,12 @@ const basename = path.basename(__filename);
 import config from '../configs/config.js';
 
 console.log({
-  "database": config.database,
-  "username": config.username,
-  "password": config.password,
-  "host": config.host,
-  "dialect": config.dialect,
-})
+  'database': config.database,
+  'username': config.username,
+  'password': config.password,
+  'host': config.host,
+  'dialect': config.dialect,
+});
 
 const sequelize = new Sequelize(
     config.database,
@@ -42,14 +42,14 @@ fs
     })
     .forEach((file) => {
       import(path.join(__dirname, file)).then(
-        modelModule => {
-          const model = modelModule.default(
-            sequelize,
-          )
-          model.sync();
-          db[model.name] = model;
-        }
-      )
+          (modelModule) => {
+            const model = modelModule.default(
+                sequelize,
+            );
+            model.sync();
+            db[model.name] = model;
+          },
+      );
     });
 
 Object.keys(db).forEach((modelName) => {
