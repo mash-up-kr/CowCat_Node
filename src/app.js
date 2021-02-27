@@ -9,10 +9,20 @@ export default class ExpressServer {
     this.port = process.env.EXPRESS_PORT;
     this.app = express();
 
+    this.isDisableKeepAlive = false;
+
     this.setUpMiddlewares();
-    this.listen();
+    this.server = this.listen();
   }
+
   setUpMiddlewares() {
+    this.app.use((req, res, next) => {
+      if (this.isDisableKeepAlive === true) {
+        res.set('Connection', 'close');
+      }
+      next();
+    });
+
     const __dirname = path.resolve();
     this.app.use(express.static(path.join(__dirname, 'public')));
     this.app.use(morgan);
@@ -27,14 +37,30 @@ export default class ExpressServer {
       res.status(500).send('Internal server error');
     });
   }
+
   listen() {
-    this.app.listen(this.port, (err) => {
+    return this.app.listen(this.port, (err) => {
       if (err) {
         console.error(err);
-        reutnr;
+        return;
+      }
+
+      if (process.send !== undefined) {
+        process.send('ready');
       }
 
       console.log(`🚀 Express Server ready at ${this.port}`);
+    });
+  }
+
+  enableDisableKeepAlive() {
+    this.isDisableKeepAlive = true;
+  }
+
+  close() {
+    this.server.close(() => {
+      console.log('Express Server closed!');
+      process.exit(0);
     });
   }
 };
