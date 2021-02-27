@@ -10,7 +10,7 @@ const sequelizeInitializer = new SequelizeInitializer();
 (async () => {
   try {
     await sequelizeInitializer.sync();
-  
+
     process.on('SIGINT', () => {
       expressServer.enableDisableKeepAlive();
       expressServer.close();
@@ -19,5 +19,4 @@ const sequelizeInitializer = new SequelizeInitializer();
     console.error(error);
     process.exit();
   }
-
 })();

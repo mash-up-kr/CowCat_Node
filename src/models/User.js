@@ -43,7 +43,7 @@ export default (sequelize) => {
     imageUrl: {
       type: DataTypes.STRING(255),
       allowNull: true,
-    }
+    },
   }, {
     sequelize,
     tableName: 'users',

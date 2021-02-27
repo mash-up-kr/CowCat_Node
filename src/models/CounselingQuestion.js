@@ -9,10 +9,10 @@ export default (sequelize) => {
         as: 'User',
       });
 
-    //   this.belongsTo(models.Category, {
-    //       foreignKey: 'categoryId',
-    //       as: 'Category',
-    //   });
+      //   this.belongsTo(models.Category, {
+      //       foreignKey: 'categoryId',
+      //       as: 'Category',
+      //   });
 
     //   this.belongsTo(models.Emotion, {
     //       foreignKey: "emotionId",
@@ -32,7 +32,7 @@ export default (sequelize) => {
       type: DataTypes.STRING(20),
       allowNull: false,
       unique: true,
-    }
+    },
   }, {
     sequelize,
     tableName: 'users',
