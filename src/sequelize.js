@@ -6,7 +6,7 @@ export default class SequelizeInitializer {
 
   sync() {
     const syncOptions = this.getSyncOption();
-    return db.sequelize.sync({syncOptions});
+    return db.sequelize.sync(syncOptions);
   }
 
   getSyncOption() {
