@@ -5,9 +5,9 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=development nodemon src/index.js",
-    "start_test": "cross-env NODE_ENV=test nodemon src/index.js",
-    "deploy": "cross-env NODE_ENV=production nodemon src/index.js"
+    "start": "cross-env NODE_ENV=development npx nodemon src/index.js",
+    "start_test": "cross-env NODE_ENV=test npx nodemon src/index.js",
+    "deploy": "cross-env NODE_ENV=production npx nodemon src/index.js"
   },
   "repository": {
     "type": "git",
