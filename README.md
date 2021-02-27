@@ -1,7 +1,7 @@
 ## CowCat_Node
 
 The node.js environments are following.
-* Node.js v14.15.4
+* Node.js v15.10.0
 
 
 ## How to install
