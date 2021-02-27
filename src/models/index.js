@@ -33,6 +33,7 @@ const db = {
   Sequelize,
 };
 
+const files = [];
 
 fs
     .readdirSync(__dirname)
@@ -41,7 +42,13 @@ fs
           (file !== basename) &&
           (file.slice(-3) === '.js');
     })
-    .forEach(async (file) => {
+    .forEach((file) => {
+      files.push(file);
+    });
+
+(async () => {
+  try {
+    await files.forEach(async (file) => {
       const modelModule = await import(path.join(__dirname, file));
       const model = modelModule.default(
           sequelize,
@@ -50,10 +57,17 @@ fs
       db[model.name] = model;
     });
 
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
+    Object.keys(db).forEach((modelName) => {
+      if (db[modelName].associate) {
+        console.log('==============');
+        console.log(modelName);
+        console.log('==============');
+        db[modelName].associate(db);
+      }
+    });
+  } catch (error) {
+    console.error(error);
   }
-});
+})();
 
 export default db;

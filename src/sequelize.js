@@ -14,6 +14,9 @@ export default class SequelizeInitializer {
     if (process.env.NODE_ENV === 'test') {
       syncOptions.force = true;
     }
+    return {
+      force: true,
+    };
     return syncOptions;
   }
 }
