@@ -1,42 +1,45 @@
 "use strict"
 
-import fs from "fs"
 import Sequelize from "sequelize"
-import path from "path"
 import config from "../configs/config.js"
-const env = process.env.NODE_ENV || "development"
-
+import User from "./User.js"
+import Category from "./Category.js"
+import Emotion from "./Emotion.js"
+import CounselingQuestion from "./CounselingQuestion.js"
+import CounselingComment from "./CounselingComment.js"
+import UserLocation from "./UserLocation.js"
+import UserToken from "./UserToken.js"
 const db = {}
-const basename = path.basename(__filename)
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config)
 
 db.sequelize = sequelize
 db.Sequelize = Sequelize
 
-fs.readdirSync(__dirname)
-  .filter((file) => {
-    return file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".js"
-  })
-  .forEach((file) => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes)
-    db[model.name] = model
-  })
+db.User = User
+db.Category = Category
+db.Emotion = Emotion
+db.CounselingQuestion = CounselingQuestion
+db.CounselingComment = CounselingComment
+db.UserLocation = UserLocation
+db.UserToken = UserLocation
 
-const modelNames = Object.keys(db)
+//init
+db.User.init(sequelize)
+// db.Category.init(sequelize)
+// db.Emotion.init(sequelize)
+db.CounselingQuestion.init(sequelize)
+// db.CounselingComment.init(sequelize)
+// db.UserLocation.init(sequelize)
+// db.UserToken.init(sequelize)
 
-console.log(modelNames)
+// //associate
+// db.User.associated(db)
+// db.Category.associated(db)
+// db.Emotion.associated(db)
+// db.CounselingQuestion.associated(db)
+// db.CounselingComment.associated(db)
+// db.UserLocation.associated(db)
+// db.UserToken.associated(db)
 
-modelNames.forEach((modelName) => {
-  if (db[modelName].init) {
-    db[modelName].init(sequelize)
-  }
-})
-
-modelNames.forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db)
-  }
-})
-
-db.db.module.exports = db
+export default db

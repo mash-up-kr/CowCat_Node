@@ -5,7 +5,7 @@ export default class User extends Sequelize.Model {
     return super.init(
       {
         id: {
-          type: Sequelize.BIGINT.UNSIGNED,
+          type: Sequelize.BIGINT,
           primaryKey: true,
           allowNull: false,
           unique: true,
@@ -35,14 +35,5 @@ export default class User extends Sequelize.Model {
     )
   }
 
-  static associated(db) {
-    db.User.hasMany(db.PaymentMethod, {
-      foreignKey: "user_id",
-      sourceKey: "id",
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    })
-    db.User.hasMany(db.Income, { foreignKey: "user_id", sourceKey: "id", onDelete: "cascade", onUpdate: "cascade" })
-    db.User.hasMany(db.Expense, { foreignKey: "user_id", sourceKey: "id", onDelete: "cascade", onUpdate: "cascade" })
-  }
+  static associated(db) {}
 }
