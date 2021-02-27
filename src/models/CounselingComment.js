@@ -22,9 +22,11 @@ export default (sequelize) => {
       },
       }, {
         sequelize,
-        tableName: 'counseling_comments',
-        charset: 'utf8',
+        tableName: 'users',
+        charset: 'utf8mb4',
+        collate: 'utf8mb4_bin',
         timestamps: true,
+        paranoid: true,
         underscored: true,
     },
     );

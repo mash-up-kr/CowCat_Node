@@ -68,6 +68,7 @@ export default (sequelize) => {
           type: Sequelize.BIGINT,
           primaryKey: true,
           allowNull: false,
+          autoIncrement: true,
           unique: true,
         },
         title: {
@@ -81,9 +82,11 @@ export default (sequelize) => {
       },
       {
         sequelize,
-        tableName: 'counseling_questions',
-        charset: 'utf8',
+        tableName: 'users',
+        charset: 'utf8mb4',
+        collate: 'utf8mb4_bin',
         timestamps: true,
+        paranoid: true,
         underscored: true,
       },
       );
