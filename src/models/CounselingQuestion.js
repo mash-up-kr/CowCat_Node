@@ -10,7 +10,7 @@ export default class CounselingQuestion extends Sequelize.Model {
           allowNull: false,
           unique: true,
         },
-        tittle: {
+        title: {
           type: Sequelize.STRING(20),
           allowNull: false,
         },
