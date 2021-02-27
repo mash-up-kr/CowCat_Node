@@ -49,10 +49,17 @@ export default CounselingQuestion;
 export default (sequelize) => {
     class CounselingQuestion extends Model {
       static associate(models) {
+<<<<<<< HEAD
         this.belongsTo(models.User, { foreignKey: "userId", targetKey: "id" })
         this.belongsTo(models.Category, { foreignKey: "categoryId ", targetKey: "id" })
         this.belongsTo(models.Emotion, { foreignKey: "emotionId ", targetKey: "id" })
         this.hasMany(models.CounselingComment, { foreignKey: "counselingQuestionId ", sourceKey: "id" })
+=======
+        this.belongsTo(models.User, { as: "User"})
+        this.belongsTo(models.Category, { as: "Category" })
+        this.belongsTo(models.Emotion, { as: "Emotion" })
+        this.hasMany(models.CounselingComment, { as: "CounselingComment" })
+>>>>>>> fix: 외래키 생성 문제 수정
       }
     }
 

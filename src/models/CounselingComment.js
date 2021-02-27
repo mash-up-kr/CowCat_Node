@@ -4,8 +4,8 @@ const {Model, DataTypes} = Sequelize;
 export default (sequelize) => {
     class CounselingComment extends Model {
         static associate(models) {
-          this.belongsTo(models.User, { foreignKey: "userId", targetKey: "id" })
-          this.belongsTo(models.CounselingQuestion, { foreignKey: "counselingQuestionId", targetKey: "id" })
+          this.belongsTo(models.User, { as: "User" })
+          this.belongsTo(models.CounselingQuestion, { as: "CounselingQuestion" })
         }
     }
 

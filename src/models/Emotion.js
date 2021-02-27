@@ -4,7 +4,7 @@ const {Model, DataTypes} = Sequelize;
 export default (sequelize) => {
     class Emotion extends Model {
         static associate(models) {
-          this.hasMany(models.CounselingQuestion, { foreignKey: "emotionId ", sourceKey: "id" })
+          this.hasMany(models.CounselingQuestion,{ as: 'CounselingQuestion'})
         }
     }
 
