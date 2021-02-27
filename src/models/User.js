@@ -9,7 +9,7 @@ export default (sequelize) => {
         as: 'Location',
       });
 
-      this.hasOne(models.UserLocation, {
+      this.hasOne(models.UserToken, {
         foreignKey: 'userId',
         as: 'Token',
       });
@@ -52,10 +52,7 @@ export default (sequelize) => {
     underscored: true,
     indexes: [
       {
-        fields: ['nickname'],
-      },
-      {
-        fields: ['imageUrl'],
+        fields: ['image_url'],
       },
     ],
   });

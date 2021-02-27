@@ -28,16 +28,16 @@ export default (sequelize) => {
     },
   }, {
     sequelize,
-    tableName: 'users',
+    tableName: 'user_tokens',
     charset: 'utf8',
     timestamps: true,
     underscored: true,
     indexes: [
       {
-        fields: ['accessToken'],
+        fields: ['access_token'],
       },
       {
-        fields: ['refreshToken'],
+        fields: ['refresh_token'],
       },
     ],
   });

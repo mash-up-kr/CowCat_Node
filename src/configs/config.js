@@ -22,8 +22,8 @@ export default {
   host: process.env.DATABASE_HOST || 'localhost',
   database: process.env.DATABASE_NAME || 'cowcat',
   port: process.env.DATABASE_PORT || 5432,
-  username: process.env.DATABASE_USERNAME || 'postgres',
-  password: process.env.DATABASE_PASSWORD || 'qwer1234!',
-  dialect: process.env.DATABASE_DIALECT || 'postgres',
+  username: process.env.DATABASE_USERNAME || 'root',
+  password: process.env.DATABASE_PASSWORD || '',
+  dialect: process.env.DATABASE_DIALECT || 'mysql',
   connectTimeout: Number(process.env.DATABASE_CONNECT_TIMEOUT || 1000),
 };
