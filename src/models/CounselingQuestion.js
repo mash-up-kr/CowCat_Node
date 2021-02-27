@@ -2,37 +2,44 @@ import {Sequelize} from 'sequelize';
 const {Model, DataTypes} = Sequelize;
 
 export default (sequelize) => {
-  class UserLocation extends Model {
+  class CounselingQuestion extends Model {
     static associate(models) {
       this.belongsTo(models.User, {
         foreignKey: 'userId',
-        as: 'user',
+        as: 'User',
       });
+
+    //   this.belongsTo(models.Category, {
+    //       foreignKey: 'categoryId',
+    //       as: 'Category',
+    //   });
+
+    //   this.belongsTo(models.Emotion, {
+    //       foreignKey: "emotionId",
+    //       as: "Emotion",
+    //   })
     }
   }
 
-  UserLocation.init({
+  CounselingQuestion.init({
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
     },
-    latitude: {
-      type: DataTypes.DOUBLE,
+    name: {
+      type: DataTypes.STRING(20),
       allowNull: false,
-    },
-    longitude: {
-      type: DataTypes.DOUBLE,
-      allowNull: false,
-    },
+      unique: true,
+    }
   }, {
     sequelize,
-    tableName: 'user_locations',
+    tableName: 'users',
     charset: 'utf8',
     timestamps: true,
     underscored: true,
   });
 
-  return UserLocation;
+  return CounselingQuestion;
 };

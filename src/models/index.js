@@ -11,6 +11,14 @@ const basename = path.basename(__filename);
 
 import config from '../configs/config.js';
 
+console.log({
+  "database": config.database,
+  "username": config.username,
+  "password": config.password,
+  "host": config.host,
+  "dialect": config.dialect,
+})
+
 const sequelize = new Sequelize(
     config.database,
     config.username,
@@ -38,6 +46,7 @@ fs
           const model = modelModule.default(
             sequelize,
           )
+          model.sync();
           db[model.name] = model;
         }
       )
