@@ -33,6 +33,7 @@ const db = {
   Sequelize,
 };
 
+
 fs
     .readdirSync(__dirname)
     .filter((file) => {
@@ -40,16 +41,13 @@ fs
           (file !== basename) &&
           (file.slice(-3) === '.js');
     })
-    .forEach((file) => {
-      import(path.join(__dirname, file)).then(
-          (modelModule) => {
-            const model = modelModule.default(
-                sequelize,
-            );
-            model.sync();
-            db[model.name] = model;
-          },
+    .forEach(async (file) => {
+      const modelModule = await import(path.join(__dirname, file));
+      const model = modelModule.default(
+          sequelize,
       );
+      model.sync();
+      db[model.name] = model;
     });
 
 Object.keys(db).forEach((modelName) => {

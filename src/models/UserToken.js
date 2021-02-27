@@ -29,7 +29,8 @@ export default (sequelize) => {
   }, {
     sequelize,
     tableName: 'user_tokens',
-    charset: 'utf8',
+    charset: 'utf8mb4',
+    collate: 'utf8mb4_bin',
     timestamps: true,
     underscored: true,
     indexes: [
