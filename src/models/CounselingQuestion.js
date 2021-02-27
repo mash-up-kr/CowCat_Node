@@ -48,11 +48,11 @@ export default CounselingQuestion;
 =======
 export default (sequelize) => {
     class CounselingQuestion extends Model {
-      static associate(model) {
-        this.belongsTo(model.User, { foreignKey: "userId", targetKey: "id" })
-        this.belongsTo(model.Category, { foreignKey: "categoryId ", targetKey: "id" })
-        this.belongsTo(model.Emotion, { foreignKey: "emotionId ", targetKey: "id" })
-        this.hasMany(model.CounselingComment, { foreignKey: "counselingQuestionId ", sourceKey: "id" })
+      static associate(models) {
+        this.belongsTo(models.User, { foreignKey: "userId", targetKey: "id" })
+        this.belongsTo(models.Category, { foreignKey: "categoryId ", targetKey: "id" })
+        this.belongsTo(models.Emotion, { foreignKey: "emotionId ", targetKey: "id" })
+        this.hasMany(models.CounselingComment, { foreignKey: "counselingQuestionId ", sourceKey: "id" })
       }
     }
 
@@ -74,7 +74,7 @@ export default (sequelize) => {
       },
       {
         sequelize,
-        tableName: 'users',
+        tableName: 'counseling_questions',
         charset: 'utf8',
         timestamps: true,
         underscored: true,

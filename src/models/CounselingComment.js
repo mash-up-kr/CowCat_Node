@@ -22,7 +22,7 @@ export default (sequelize) => {
       },
       }, {
         sequelize,
-        tableName: 'users',
+        tableName: 'counseling_comments',
         charset: 'utf8',
         timestamps: true,
         underscored: true,

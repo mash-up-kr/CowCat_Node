@@ -4,7 +4,7 @@ const {Model, DataTypes} = Sequelize;
 export default (sequelize) => {
     class Category extends Model {
         static associate(models) {
-          this.hasMany(model.CounselingQuestion, { foreignKey: "categoryId ", sourceKey: "id" })
+          this.hasMany(models.CounselingQuestion, { foreignKey: "categoryId ", sourceKey: "id" })
         }
     }
 
@@ -25,7 +25,7 @@ export default (sequelize) => {
       },
     }, {
         sequelize,
-        tableName: 'users',
+        tableName: 'categories',
         charset: 'utf8',
         timestamps: true,
         underscored: true,

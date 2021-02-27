@@ -4,7 +4,7 @@ const {Model, DataTypes} = Sequelize;
 export default (sequelize) => {
     class Emotion extends Model {
         static associate(models) {
-          this.hasMany(model.CounselingQuestion, { foreignKey: "emotionId ", sourceKey: "id" })
+          this.hasMany(models.CounselingQuestion, { foreignKey: "emotionId ", sourceKey: "id" })
         }
     }
 
@@ -25,7 +25,7 @@ export default (sequelize) => {
       },
     }, {
         sequelize,
-        tableName: 'users',
+        tableName: 'emotions',
         charset: 'utf8',
         timestamps: true,
         underscored: true,
