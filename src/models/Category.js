@@ -25,7 +25,7 @@ export default (sequelize) => {
       },
     }, {
         sequelize,
-        tableName: 'users',
+        tableName: 'categories',
         charset: 'utf8mb4',
         collate: 'utf8mb4_bin',
         timestamps: true,
