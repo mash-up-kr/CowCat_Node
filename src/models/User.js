@@ -5,13 +5,13 @@ const {Model, DataTypes} = Sequelize;
 
 class User extends Model {
   static associate(models) {
-    this.hasOne(models.UserLocation, {
-      foreignKey: 'userId',
+    this.belongsTo(models.UserLocation, {
+      foreignKey: 'locationId',
       as: 'Location',
     });
 
-    this.hasOne(models.UserToken, {
-      foreignKey: 'userId',
+    this.belongsTo(models.UserToken, {
+      foreignKey: 'tokenId',
       as: 'Token',
     });
   }

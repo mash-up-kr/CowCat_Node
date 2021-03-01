@@ -5,9 +5,9 @@ const {Model, DataTypes} = Sequelize;
 
 class UserToken extends Model {
   static associate(models) {
-    this.belongsTo(models.User, {
-      foreignKey: 'userId',
-      as: 'user',
+    this.hasOne(models.User, {
+      foreignKey: 'tokenId',
+      as: 'User',
     });
   }
 }
