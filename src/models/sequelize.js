@@ -2,7 +2,10 @@ import Sequelize from 'sequelize';
 import config from '../configs/database_config.js';
 
 const sequelize = new Sequelize(
-    config.database, config.username, config.password, config
+    config.database,
+    config.username,
+    config.password,
+    config,
 );
 
 const db = {};

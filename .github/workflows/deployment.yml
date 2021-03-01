@@ -1,0 +1,67 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy to Production
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  deploy:
+     name: Build, Deploy to S3 Bucket
+     runs-on: ubuntu-latest
+     
+     strategy:
+       matrix:
+         node-version: [15.10.x]
+     
+     steps:
+       - uses: actions/checkout@v2
+       
+       - name: Node.js ${{ matrix.node-version }}
+         uses: actions/setup-node@v1
+         with:
+          node-version: ${{ matrix.node-version }}
+
+       - name: Npm install
+         run: npm install
+      
+       - name: lint
+         run: npm run lint
+         env:
+            CI: true
+       
+       - name: Remove node_modules
+         run: rm -rf node_modules
+       
+       - name: Make zip file
+         run: zip -r ./$GITHUB_SHA.zip .
+         shell: bash
+      
+       - name: Configure AWS credentials
+         uses: aws-actions/configure-aws-credentials@v1
+         with:
+            aws-access-key-id: ${{ secrets.AWS_IAM_MANAGER_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_IAM_MANAGER_SECRET_ACCESS_KEY }}
+            aws-region: ${{ secrets.AWS_REGION }}
+       
+       - name: Upload to S3
+         run: >
+          aws s3 cp --region ${{ secrets.AWS_REGION }}
+          ./$GITHUB_SHA.zip 
+          s3://${{ secrets.AWS_DEPLOYMENT_BUCKET_NAME }}/$GITHUB_SHA.zip 
+         
+       - name: Code Deploy
+         run: >
+          aws deploy create-deployment
+          --deployment-config-name CodeDeployDefault.AllAtOnce
+          --application-name ${{ secrets.AWS_CODEDEPLOY_APPLICATION_NAME }}
+          --deployment-group-name ${{ secrets.AWS_DEPLOYMENT_GROUP_NAME }}
+          --s3-location bucket=${{ secrets.AWS_DEPLOYMENT_BUCKET_NAME }},bundleType=zip,key=$GITHUB_SHA.zip
+          --file-exists-behavior OVERWRITE
