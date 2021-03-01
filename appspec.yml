@@ -5,7 +5,7 @@ os: linux
 files:
   - source: /
     destination: /home/ec2-user/app/dist/CowCat_Node
-    overwrite: yes
+    overwrite: merge
 
 permissions:
   - object: /
