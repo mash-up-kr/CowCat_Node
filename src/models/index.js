@@ -1,59 +1,19 @@
-import Sequelize from 'sequelize';
-import fs from 'fs';
-import path from 'path';
+export {sequelize} from './sequelize.js';
 
-import {fileURLToPath} from 'url';
-import {dirname} from 'path';
+import User from './User.js';
+import UserLocation from './UserLocation.js';
+import UserToken from './UserToken.js';
+import CounselingQuestion from './CounselingQuestion.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const basename = path.basename(__filename);
-
-import config from '../configs/config.js';
-
-console.log({
-  'database': config.database,
-  'username': config.username,
-  'password': config.password,
-  'host': config.host,
-  'dialect': config.dialect,
-});
-
-const sequelize = new Sequelize(
-    config.database,
-    config.username,
-    config.password,
-    {
-      host: config.host,
-      dialect: config.dialect,
-    },
-);
-const db = {
-  sequelize,
-  Sequelize,
+const models = {
+  User,
+  UserLocation,
+  UserToken,
+  CounselingQuestion,
 };
 
-
-fs
-    .readdirSync(__dirname)
-    .filter((file) => {
-      return (file.indexOf('.') !== 0) &&
-          (file !== basename) &&
-          (file.slice(-3) === '.js');
-    })
-    .forEach(async (file) => {
-      const modelModule = await import(path.join(__dirname, file));
-      const model = modelModule.default(
-          sequelize,
-      );
-      model.sync();
-      db[model.name] = model;
-    });
-
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
+Object.keys(models).forEach((model) => {
+  models[model].associate(models);
 });
 
-export default db;
+export default models;

@@ -1,4 +1,4 @@
-import db from './models/index.js';
+import {sequelize} from './models/index.js';
 
 export default class SequelizeInitializer {
   constructor() {
@@ -6,13 +6,15 @@ export default class SequelizeInitializer {
 
   sync() {
     const syncOptions = this.getSyncOption();
-    return db.sequelize.sync(syncOptions);
+    return sequelize.sync(syncOptions);
   }
 
   getSyncOption() {
     const syncOptions = {};
     if (process.env.NODE_ENV === 'test') {
       syncOptions.force = true;
+    } else if (process.env.NODE_ENV === 'development') {
+      syncOptions.alter = true;
     }
     return syncOptions;
   }
