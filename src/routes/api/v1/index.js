@@ -5,6 +5,6 @@ import counselingRouter from './counseling.router.js';
 const router = new express.Router();
 
 router.use('/users', userRouter);
-router.use('/counseling', counselingRouter);
+router.use('/counselings', counselingRouter);
 
 export default router;

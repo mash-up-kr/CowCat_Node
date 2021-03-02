@@ -9,17 +9,17 @@ router
   .get(questionController.getQuestions)
   .post(questionController.postQuestion);
 router
-  .route('/:questionId')
+  .route('/:questionId(\\d+)')
   .get(questionController.getQuestion)
   .put(questionController.putQuestion)
   .delete(questionController.deleteQuestion);
 
 router
-  .route('/:questionId/comments')
+  .route('/:questionId(\\d+)/comments')
   .get(commentController.getComments)
   .post(commentController.postComment);
 router
-  .route('/:questionId/comments/:commentId')
+  .route('/:questionId(\\d+)/comments/:commentId(\\d+)')
   .put(commentController.putComment)
   .delete(commentController.deleteComment);
 
