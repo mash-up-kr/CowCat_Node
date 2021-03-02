@@ -1,7 +1,7 @@
 import db from './sequelize.js';
 
-const {sequelize, Sequelize} = db;
-const {Model, DataTypes} = Sequelize;
+const { sequelize, Sequelize } = db;
+const { Model, DataTypes } = Sequelize;
 
 class CounselingQuestion extends Model {
   static associate(models) {
@@ -10,38 +10,44 @@ class CounselingQuestion extends Model {
       as: 'User',
     });
 
-    // this.belongsTo(models.Category, {
-    //   foreignKey: 'categoryId',
-    //   as: 'Category',
-    // });
+    this.belongsTo(models.Category, {
+      foreignKey: 'categoryId',
+      as: 'Category',
+    });
 
-    // this.belongsTo(models.Emotion, {
-    //   foreignKey: 'emotionId',
-    //   as: 'Emotion',
-    // });
+    this.belongsTo(models.Emotion, {
+      foreignKey: 'emotionId',
+      as: 'Emotion',
+    });
   }
 }
 
-CounselingQuestion.init({
-  id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
+CounselingQuestion.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      allowNull: false,
+      autoIncrement: true,
+    },
+    title: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+    },
+    content: {
+      type: DataTypes.STRING(200),
+      allowNull: false,
+    },
   },
-  name: {
-    type: DataTypes.STRING(20),
-    allowNull: false,
-    unique: true,
-  },
-}, {
-  sequelize,
-  tableName: 'counseling_questions',
-  charset: 'utf8mb4',
-  collate: 'utf8mb4_bin',
-  timestamps: true,
-  paranoid: true,
-  underscored: true,
-});
+  {
+    sequelize,
+    tableName: 'counseling_questions',
+    charset: 'utf8mb4',
+    collate: 'utf8mb4_bin',
+    timestamps: true,
+    paranoid: true,
+    underscored: true,
+  }
+);
 
 export default CounselingQuestion;
