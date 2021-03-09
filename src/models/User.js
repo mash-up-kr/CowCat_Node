@@ -14,6 +14,18 @@ class User extends Model {
       foreignKey: 'tokenId',
       as: 'Token',
     });
+
+    this.hasMany(models.CounselingQuestion, {
+      foreignKey: 'user_id',
+      sourceKey: 'id',
+      as: 'CounselingQuestion',
+    });
+
+    this.hasMany(models.CounselingComment, {
+      foreignKey: 'user_id',
+      sourceKey: 'id',
+      as: 'CounselingComment',
+    });
   }
 }
 

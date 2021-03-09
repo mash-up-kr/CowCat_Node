@@ -5,7 +5,11 @@ const { Model, DataTypes } = Sequelize;
 
 class Category extends Model {
   static associate(models) {
-    this.hasMany(models.CounselingQuestion, { as: 'CounselingQuestion' });
+    this.hasMany(models.CounselingQuestion, {
+      foreignKey: 'category_id',
+      sourceKey: 'id',
+      as: 'CounselingQuestion',
+    });
   }
 }
 

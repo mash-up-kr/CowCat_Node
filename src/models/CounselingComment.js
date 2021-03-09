@@ -1,3 +1,4 @@
+import CounselingQuestion from './CounselingQuestion.js';
 import db from './sequelize.js';
 
 const { sequelize, Sequelize } = db;
@@ -5,8 +6,16 @@ const { Model, DataTypes } = Sequelize;
 
 class CounselingComment extends Model {
   static associate(models) {
-    this.belongsTo(models.User, { as: 'User' });
-    this.belongsTo(models.CounselingQuestion, { as: 'CounselingQuestion' });
+    this.belongsTo(models.User, {
+      foreignKey: 'user_id',
+      targetKey: 'id',
+      as: 'User',
+    });
+    this.belongsTo(models.CounselingQuestion, {
+      foreignKey: 'counseling_question_id',
+      targetKey: 'id',
+      as: 'CounselingQuestion',
+    });
   }
 }
 

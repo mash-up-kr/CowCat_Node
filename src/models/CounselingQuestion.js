@@ -7,17 +7,25 @@ class CounselingQuestion extends Model {
   static associate(models) {
     this.belongsTo(models.User, {
       foreignKey: 'userId',
+      targetKey: 'id',
       as: 'User',
     });
 
     this.belongsTo(models.Category, {
       foreignKey: 'categoryId',
+      targetKey: 'id',
       as: 'Category',
     });
 
     this.belongsTo(models.Emotion, {
       foreignKey: 'emotionId',
+      targetKey: 'id',
       as: 'Emotion',
+    });
+    this.hasMany(models.CounselingComment, {
+      foreignKey: 'counseling_question_id',
+      sourceKey: 'id',
+      as: 'CounselingQuestion',
     });
   }
 }
