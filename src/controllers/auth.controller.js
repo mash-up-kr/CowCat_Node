@@ -11,9 +11,9 @@ export const getKakaoCallback = async (req, res, next) => {
   const params = new URLSearchParams();
   params.append('code', `${code}`);
   params.append('grant_type', 'authorization_code');
-  params.append('redirect_uri', 'http://localhost:3000/api/v1/auth/kakao/callback');
-  params.append('client_secret', 'oFAdMVKWttu9auyDWd9rA7SXKXq4z5Hw');
-  params.append('client_id', '37bd0311edf6745360da88d2d959d4a3');
+  params.append('redirect_uri', process.env.KAKAO_REDIRECT_URI);
+  params.append('client_secret', process.env.KAKAO_SECRET_KEY);
+  params.append('client_id', process.env.KAKAO_REST_API_KEY);
 
   try {
     const result = await axios.post(`https://kauth.kakao.com/oauth/token`,
