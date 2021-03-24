@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from './middlewares/morgan.js';
+import helmet from 'helmet';
 import router from './routes/index.js';
 import cors from 'cors';
 import path from 'path';
@@ -22,6 +23,8 @@ export default class ExpressServer {
       }
       next();
     });
+
+    this.app.use(helmet());
 
     const __dirname = path.resolve();
     this.app.use(express.static(path.join(__dirname, 'public')));
