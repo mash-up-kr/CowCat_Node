@@ -1,6 +1,5 @@
 import userService from '../services/user.service.js';
 import {Success, Failure} from '../utils/response.js';
-import {redisDefault, getAsyncReadonly} from '../redis.js';
 
 import jsonwebtoken from '../auth/jsonwebtoken.js';
 
@@ -41,14 +40,7 @@ export const getMyProfile = async (req, res, next) => {
 };
 
 export const putMyProfile = async (req, res, next) => {
-  const {
-    nickname,
-    gender,
-    birthdayYear,
-    location,
-  } = req.body;
 
-  return Success(req.body);
 };
 
 export const postRefreshToken = async (req, res, next) => {
