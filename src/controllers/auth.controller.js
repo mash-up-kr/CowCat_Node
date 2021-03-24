@@ -35,6 +35,11 @@ export const postLogin = async (req, res, next) => {
   try {
     const getUser = await userService.getUserBySnsAuth(req.snsId, req.snsType);
 
+    if (getUser == null) {
+      res.status(200).json(Failure('해당하는 계정이 없습니다.'));
+      return;
+    }
+
     const jsonResult = Success(getUser);
 
     // 토큰 정보를 같이 넣어줍니다.
