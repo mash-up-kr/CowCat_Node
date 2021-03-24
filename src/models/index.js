@@ -2,7 +2,6 @@ export {sequelize} from './sequelize.js';
 
 import User from './User.js';
 import UserLocation from './UserLocation.js';
-import UserToken from './UserToken.js';
 
 import Category from './Category.js';
 import Emotion from './Emotion.js';
@@ -12,7 +11,6 @@ import CounselingComment from './CounselingComment.js';
 const models = {
   User,
   UserLocation,
-  UserToken,
 
   Category,
   Emotion,

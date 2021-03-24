@@ -10,53 +10,70 @@ class User extends Model {
       as: 'Location',
     });
 
-    this.belongsTo(models.UserToken, {
-      foreignKey: 'tokenId',
-      as: 'Token',
+    this.hasMany(models.CounselingQuestion, {
+      foreignKey: 'user_id',
+      sourceKey: 'id',
+      as: 'CounselingQuestion',
+    });
+
+    this.hasMany(models.CounselingComment, {
+      foreignKey: 'user_id',
+      sourceKey: 'id',
+      as: 'CounselingComment',
     });
   }
 }
 
-User.init({
-  id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  nickname: {
-    type: DataTypes.STRING(10),
-    allowNull: false,
-    unique: true,
-  },
-  birthday: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-  gender: {
-    type: DataTypes.ENUM([
-      'F',
-      'M',
-    ]),
-    defaultValue: 'F',
-    allowNull: false,
-  },
-  imageUrl: {
-    type: DataTypes.STRING(255),
-    allowNull: true,
-  },
-}, {
-  sequelize,
-  tableName: 'users',
-  charset: 'utf8mb4',
-  collate: 'utf8mb4_bin',
-  timestamps: true,
-  underscored: true,
-  indexes: [
+User.init(
     {
-      fields: ['image_url'],
+      id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      snsId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      snsType: {
+        type: DataTypes.ENUM([
+          'kakao',
+        ]),
+        allowNull: false,
+      },
+      nickname: {
+        type: DataTypes.STRING(10),
+        allowNull: true,
+      },
+      birthday: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      gender: {
+        type: DataTypes.ENUM(['F', 'M']),
+        defaultValue: 'F',
+        allowNull: true,
+      },
+      imageUrl: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+      },
     },
-  ],
-});
+    {
+      sequelize,
+      tableName: 'users',
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_bin',
+      timestamps: true,
+      underscored: true,
+      indexes: [
+        {
+          fields: ['image_url'],
+        },
+        {unique: true, fields: ['nickname']},
+      ],
+    },
+);
 
 export default User;
