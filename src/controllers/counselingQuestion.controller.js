@@ -4,7 +4,7 @@ import {Success, Failure} from '../utils/response.js';
 
 export const postQuestion = async (req, res, next) => {
   const {title, content, categoryId, emotionId, userId} = req.body;
-  
+
   if (typeof title !== 'string' || typeof content !== 'string') {
     return res.status(200).json(Failure('문자열을 입력해주세요.'));
   }
@@ -20,7 +20,7 @@ export const postQuestion = async (req, res, next) => {
   if (emotionId === null) {
     return res.status(200).json(Failure('현재 기분을 선택해주세요.'));
   }
-  
+
   try {
     const questions = await questionService.postQuestion({
       title,
@@ -46,7 +46,7 @@ export const getQuestions = async (req, res, next) => {
 
 export const getQuestion = async (req, res, next) => {
   const {questionId} = req.params;
-  
+
   try {
     const questions = await questionService.getQuestion({
       questionId,
@@ -90,8 +90,8 @@ export const putQuestion = async (req, res, next) => {
       return res.status(200).json(Failure('존재하지 않는 고민입니다.'));
     }
     return res
-      .status(201)
-      .json(Success(await questionService.getQuestion({questionId})));
+        .status(201)
+        .json(Success(await questionService.getQuestion({questionId})));
   } catch (err) {
     next(err);
   }
