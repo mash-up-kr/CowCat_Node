@@ -59,9 +59,7 @@ export const postLogin = async (req, res, next) => {
 
 export const postRefreshToken = async (req, res, next) => {
   try {
-    const getUser = await userService.getUserBySnsAuth(req.snsId, req.snsType);
-
-    if (getUser === null) {
+    if (req.user === null) {
       throw new Error();
     }
 
@@ -69,7 +67,7 @@ export const postRefreshToken = async (req, res, next) => {
 
     res.status(200).json(Success(accessToken));
   } catch (error) {
-    res.status(200).json(Failure('토큰이 일치하지 않습니다.'));
+    res.status(200).json(Failure('토큰 생성에 실패하였습니다.'));
   }
 };
 
