@@ -88,9 +88,11 @@ export const checkJWTRefreshToken = async (req, res, next) => {
     );
   }
 
+  let verifyingJWT = null;
+
   try {
     const parseToken = token.split('Bearer ')[1];
-    const verifyingJWT = await jwt.verify(parseToken, process.env.SECRET_KEY);
+    verifyingJWT = await jwt.verify(parseToken, process.env.SECRET_KEY);
 
     if (typeof verifyingJWT === 'object' &&
         !('snsId' in verifyingJWT) &&
