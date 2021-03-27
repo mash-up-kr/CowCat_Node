@@ -17,6 +17,7 @@ export const signUp = async (
     throw new Error(`gender 필드는 'M'과 'F' 값 중 하나여야 합니다.`);
   }
 
+  birthdayYear = String(birthdayYear);
   if (birthdayYear.length != 4) {
     throw new Error(`birthdayYear 필드는 4자리 년도 형식이어야 합니다.`);
   }
@@ -36,29 +37,81 @@ export const signUp = async (
     nickname,
     birthday: birthdayDate,
     gender,
-    imageUrl,
+    imageUrl: imageUrl || '',
   });
 
   return createUser;
 };
 
-export const getProfile = async () => {
+export const editProfile = async (
+    user,
+    nickname,
+    gender,
+    birthdayYear,
+    imageUrl,
+    location,
+) => {
+  if (nickname !== null) {
+    user.nickname = nickname;
+  }
 
-};
+  if (gender !== null) {
+    if (gender != 'M' && gender != 'F') {
+      throw new Error(`gender 필드는 'M'과 'F' 값 중 하나여야 합니다.`);
+    }
 
-export const editProfile = async () => {
+    user.gender = gender;
+  }
 
-};
+  if (birthdayYear !== null) {
+    if (birthdayYear.length != 4) {
+      throw new Error(`birthdayYear 필드는 4자리 년도 형식이어야 합니다.`);
+    }
 
-export const updateRefreshToken = async () => {
+    const birthdayYearInt = parseInt(birthdayYear, 10);
+    const nowYear = new Date().getFullYear();
 
+    if (birthdayYearInt > nowYear) {
+      throw new Error(`birthdayYear 필드는 현재 년도보다 작거나 같아야 합니다.`);
+    }
+
+    const birthdayDate = new Date(birthdayYearInt, 0, 1, 0, 0, 0, 0);
+    user.birthday = birthdayDate;
+  }
+
+  if (imageUrl !== null) {
+    user.imageUrl = imageUrl;
+  }
+
+  if (location !== null) {
+    const {latitude, longitude} = location;
+
+    if (user.Location === null) {
+      user.dataValues.Location = await user.createLocation({
+        longitude,
+        latitude,
+      });
+    } else {
+      user.Location.latitude = latitude;
+      user.Location.longitude = longitude;
+      await user.Location.save();
+    }
+  }
+
+  const saveUser = await user.save();
+  return saveUser;
 };
 
 export const isExistedNickname = async (nickname) => {
   const getNicknameUser = await User.findOne({
     attributes: [
-      'nickname',
+      'id',
     ],
+    where: {
+      'nickname': {
+        [Op.eq]: nickname,
+      },
+    },
   });
 
   if (getNicknameUser === null) {
@@ -120,6 +173,11 @@ export const getUserById = async (userId) => {
         model: UserLocation,
         as: 'Location',
         required: false,
+        attributes: [
+          'id',
+          'latitude',
+          'longitude',
+        ],
       },
     ],
   });
@@ -138,9 +196,7 @@ export const createUserBySnsAuth = async (snsId, snsType) => {
 
 export default {
   signUp,
-  getProfile,
   editProfile,
-  updateRefreshToken,
   isExistedNickname,
   getUserBySnsAuth,
   getUserById,
