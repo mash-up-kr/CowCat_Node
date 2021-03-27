@@ -21,18 +21,6 @@ class User extends Model {
       sourceKey: 'id',
       as: 'CounselingComment',
     });
-
-    this.hasMany(models.CounselingQuestion, {
-      foreignKey: 'user_id',
-      sourceKey: 'id',
-      as: 'CounselingQuestion',
-    });
-
-    this.hasMany(models.CounselingComment, {
-      foreignKey: 'user_id',
-      sourceKey: 'id',
-      as: 'CounselingComment',
-    });
   }
 }
 
