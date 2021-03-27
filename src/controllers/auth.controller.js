@@ -1,11 +1,12 @@
 import axios from 'axios';
+import jsonwebtoken from '../auth/jsonwebtoken.js';
+
 import userService from '../services/user.service.js';
 import {Success, Failure} from '../utils/response.js';
 
-import jsonwebtoken from '../auth/jsonwebtoken.js';
-
 export const getKakaoCallback = async (req, res, next) => {
   // https://kauth.kakao.com/oauth/authorize?response_type=code&redirect_uri=http://localhost:3000/api/v1/auth/kakao/callback&client_id=37bd0311edf6745360da88d2d959d4a3
+  // https://kauth.kakao.com/oauth/authorize?response_type=code&redirect_uri=https://api.cowcat.live/api/v1/auth/kakao/callback&client_id=37bd0311edf6745360da88d2d959d4a3
   const {code} = req.query;
 
   const params = new URLSearchParams();
@@ -43,7 +44,11 @@ export const postLogin = async (req, res, next) => {
     const jsonResult = Success(getUser);
 
     // 토큰 정보를 같이 넣어줍니다.
-    const tokens = await jsonwebtoken.createToken(req.snsId, req.snsType);
+    const tokens = await jsonwebtoken.createToken(
+        getUser.id,
+        req.snsId,
+        req.snsType,
+    );
     jsonResult.data.dataValues.token = tokens;
 
     res.status(200).json(jsonResult);
@@ -52,7 +57,24 @@ export const postLogin = async (req, res, next) => {
   }
 };
 
+export const postRefreshToken = async (req, res, next) => {
+  try {
+    const getUser = await userService.getUserBySnsAuth(req.snsId, req.snsType);
+
+    if (getUser === null) {
+      throw new Error();
+    }
+
+    const accessToken = await jsonwebtoken.createAccessToken(req.user.id);
+
+    res.status(200).json(Success(accessToken));
+  } catch (error) {
+    res.status(200).json(Failure('토큰이 일치하지 않습니다.'));
+  }
+};
+
 export default {
   getKakaoCallback,
   postLogin,
+  postRefreshToken,
 };
