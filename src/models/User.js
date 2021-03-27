@@ -5,9 +5,21 @@ const {Model, DataTypes} = Sequelize;
 
 class User extends Model {
   static associate(models) {
-    this.belongsTo(models.UserLocation, {
-      foreignKey: 'locationId',
+    this.hasOne(models.UserLocation, {
+      foreignKey: 'userId',
       as: 'Location',
+    });
+
+    this.hasMany(models.CounselingQuestion, {
+      foreignKey: 'user_id',
+      sourceKey: 'id',
+      as: 'CounselingQuestion',
+    });
+
+    this.hasMany(models.CounselingComment, {
+      foreignKey: 'user_id',
+      sourceKey: 'id',
+      as: 'CounselingComment',
     });
 
     this.hasMany(models.CounselingQuestion, {

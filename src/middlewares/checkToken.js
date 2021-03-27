@@ -42,7 +42,8 @@ export const checkJWTAccessToken = async (req, res, next) => {
   }
 
   try {
-    const verifyingJWT = await jwt.verify(token, process.env.SECRET_KEY);
+    const parseToken = token.split('Bearer ')[1];
+    const verifyingJWT = await jwt.verify(parseToken, process.env.SECRET_KEY);
 
     if (typeof verifyingJWT === 'object' && !('user' in verifyingJWT)) {
       return res.status(200).json(
@@ -55,23 +56,24 @@ export const checkJWTAccessToken = async (req, res, next) => {
           Failure('토큰이 일치하지 않습니다.'),
       );
     }
-  } catch (error) {
-    return res.status(400).json(
-        Failure(
-            '토큰이 만료되었습니다.',
-        ),
-    );
-  }
 
-  try {
     const getUser = await userService.getUserById(verifyingJWT.user.id);
+
+    if (getUser === null) {
+      return res.status(400).json(
+          Failure(
+              '유저를 찾을 수 없습니다.',
+          ),
+      );
+    }
+
     req.user = getUser;
 
     next();
   } catch (error) {
     return res.status(400).json(
         Failure(
-            '유저를 찾을 수 없습니다.',
+            '토큰이 만료되었습니다.',
         ),
     );
   }
@@ -87,7 +89,8 @@ export const checkJWTRefreshToken = async (req, res, next) => {
   }
 
   try {
-    const verifyingJWT = await jwt.verify(token, process.env.SECRET_KEY);
+    const parseToken = token.split('Bearer ')[1];
+    const verifyingJWT = await jwt.verify(parseToken, process.env.SECRET_KEY);
 
     if (typeof verifyingJWT === 'object' &&
         !('snsId' in verifyingJWT) &&
