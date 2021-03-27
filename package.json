@@ -31,6 +31,7 @@
     }
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
@@ -39,7 +40,10 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "mysql2": "^2.2.5",
+<<<<<<< HEAD
     "passport": "^0.4.1",
+=======
+>>>>>>> daead7e800e29fde85fa895dd9c6ede02e30e017
     "passport-kakao": "^1.0.1",
     "pm2": "^4.5.5",
     "sequelize": "^6.5.0",
