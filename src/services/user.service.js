@@ -64,6 +64,8 @@ export const editProfile = async (
   }
 
   if (birthdayYear !== null) {
+    birthdayYear = String(birthdayYear);
+
     if (birthdayYear.length != 4) {
       throw new Error(`birthdayYear 필드는 4자리 년도 형식이어야 합니다.`);
     }
