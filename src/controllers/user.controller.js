@@ -83,7 +83,7 @@ export const postCheckNickname = async (req, res, next) => {
   const {nickname} = req.body;
 
   try {
-    const isExistedNickname = await userService.isExistedNickname(nickname);
+    const isExistedNickname = await userService.isCreatableNickname(nickname);
 
     if (isExistedNickname === false) {
       return res.status(200).json(Success(false));
