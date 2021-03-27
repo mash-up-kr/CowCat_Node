@@ -10,9 +10,16 @@ class User extends Model {
       as: 'Location',
     });
 
-    this.belongsTo(models.UserToken, {
-      foreignKey: 'tokenId',
-      as: 'Token',
+    this.hasMany(models.CounselingQuestion, {
+      foreignKey: 'user_id',
+      sourceKey: 'id',
+      as: 'CounselingQuestion',
+    });
+
+    this.hasMany(models.CounselingComment, {
+      foreignKey: 'user_id',
+      sourceKey: 'id',
+      as: 'CounselingComment',
     });
 
     this.hasMany(models.CounselingQuestion, {
@@ -37,18 +44,28 @@ User.init(
         autoIncrement: true,
         primaryKey: true,
       },
+      snsId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      snsType: {
+        type: DataTypes.ENUM([
+          'kakao',
+        ]),
+        allowNull: false,
+      },
       nickname: {
         type: DataTypes.STRING(10),
-        allowNull: false,
+        allowNull: true,
       },
       birthday: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
       },
       gender: {
         type: DataTypes.ENUM(['F', 'M']),
         defaultValue: 'F',
-        allowNull: false,
+        allowNull: true,
       },
       imageUrl: {
         type: DataTypes.STRING(255),
