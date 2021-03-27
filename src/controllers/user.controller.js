@@ -69,7 +69,11 @@ export const patchMyProfile = async (req, res, next) => {
         location ?? null,
     );
 
-    res.status(200).json(Success(updateUser));
+    // 생일년도-01-01 으로 바꿔주기 위해 Json 결과를 조작합니다.
+    const jsonResult = Success(updateUser);
+    jsonResult.data.dataValues.birthday = `${birthdayYear}-01-01`;
+
+    res.status(200).json(jsonResult);
   } catch (error) {
     res.status(200).json(Failure(error));
   }

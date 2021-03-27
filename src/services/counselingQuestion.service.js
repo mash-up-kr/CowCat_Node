@@ -7,14 +7,14 @@ export const postQuestion = async (
     content,
     categoryId,
     emotionId,
-    userId,
+    user,
 ) => {
   const questions = await CounselingQuestion.create({
     title,
     content,
     category_id: categoryId,
     emotion_id: emotionId,
-    user_id: userId,
+    user,
   });
   return questions;
 };
