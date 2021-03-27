@@ -104,7 +104,11 @@ export const editProfile = async (
   return saveUser;
 };
 
-export const isExistedNickname = async (nickname) => {
+export const isCreatableNickname = async (nickname) => {
+  if (nickname === '' || nickname === null) {
+    return false;
+  }
+
   const getNicknameUser = await User.findOne({
     attributes: [
       'id',
@@ -116,7 +120,8 @@ export const isExistedNickname = async (nickname) => {
     },
   });
 
-  if (getNicknameUser === null) {
+  if (getNicknameUser !== null) {
+    // 닉네임 생성 불가능
     return false;
   }
 
@@ -199,7 +204,7 @@ export const createUserBySnsAuth = async (snsId, snsType) => {
 export default {
   signUp,
   editProfile,
-  isExistedNickname,
+  isCreatableNickname,
   getUserBySnsAuth,
   getUserById,
   createUserBySnsAuth,
