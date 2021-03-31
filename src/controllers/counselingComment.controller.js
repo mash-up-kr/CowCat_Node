@@ -6,7 +6,11 @@ export const postComment = async (req, res, next) => {
   const {questionId} = req.params;
   const {content} = req.body;
   const userId = req.user.id;
+<<<<<<< HEAD
 
+=======
+  console.log(req.user);
+>>>>>>> 53994c40657cc9fbe97a18054f1f848812217c52
   if (typeof content !== 'string') {
     return res.status(200).json(Failure('문자열을 입력해주세요.'));
   }
