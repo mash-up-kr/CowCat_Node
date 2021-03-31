@@ -26,19 +26,19 @@ export const getComment = async ({commentId}) => {
   return result;
 };
 
-export const putComment = async ({commentId, content}) => {
+export const putComment = async ({commentId, content, userId}) => {
   const [result] = await CounselingComment.update(
       {
         content,
       },
-      {where: {id: commentId}},
+      {where: {id: commentId, user_id: userId}},
   );
   return result;
 };
 
-export const deleteComment = async ({commentId}) => {
+export const deleteComment = async ({commentId, userId}) => {
   const result = await CounselingComment.destroy({
-    where: {id: commentId},
+    where: {id: commentId, user_id: userId},
   });
   return result;
 };
