@@ -2,7 +2,15 @@ import questionService from '../services/counselingQuestion.service.js';
 import {Success, Failure} from '../utils/response.js';
 
 export const postQuestion = async (req, res, next) => {
-  const {title, content, categoryId, emotionId, userId} = req.body;
+  const userId = req.user.id;
+  const {
+    title,
+    content,
+    categoryId,
+    emotionId,
+    latitude,
+    longitude,
+  } = req.body;
 
   if (typeof title !== 'string' || typeof content !== 'string') {
     return res.status(200).json(Failure('문자열을 입력해주세요.'));
@@ -27,6 +35,8 @@ export const postQuestion = async (req, res, next) => {
         categoryId,
         emotionId,
         userId,
+        latitude,
+        longitude,
     );
     return res.status(201).json(Success(questions));
   } catch (err) {
@@ -35,8 +45,11 @@ export const postQuestion = async (req, res, next) => {
 };
 
 export const getQuestions = async (req, res, next) => {
+
   try {
-    const questions = await questionService.getQuestions();
+    const questions = await questionService.getQuestions(
+      req.user,
+    );
     return res.status(201).json(Success(questions));
   } catch (err) {
     next(err);
@@ -57,8 +70,14 @@ export const getQuestion = async (req, res, next) => {
 };
 
 export const putQuestion = async (req, res, next) => {
-  const {title, content, categoryId, emotionId, userId} = req.body;
+  const userId = req.user.id;
   const {questionId} = req.params;
+  const {
+    title,
+    content,
+    categoryId,
+    emotionId,
+  } = req.body;
 
   if (typeof title !== 'string' || typeof content !== 'string') {
     return res.status(200).json(Failure('문자열을 입력해주세요.'));
