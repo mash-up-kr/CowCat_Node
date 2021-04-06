@@ -14,7 +14,7 @@ export const postQuestion = async (
     latitude,
     longitude,
 ) => {
-  let point = {
+  const point = {
     type: 'Point',
     coordinates: [latitude, longitude],
     //  crs: { type: 'name', properties: { name: 'EPSG:4326'} }
@@ -39,42 +39,42 @@ export const getQuestions = async (
 ) => {
   const lat = user.Location.latitude;
   const long = user.Location.longitude;
-  
+
   const questions = await CounselingQuestion.findAll({
     attributes: {
-      include:[[
+      include: [[
         sequelize.fn('ST_Distance',
-          sequelize.col('location'),
-          sequelize.fn('POINT', lat, long),
+            sequelize.col('location'),
+            sequelize.fn('POINT', lat, long),
         ),
-        'distance'
+        'distance',
       ]],
     },
     order: [[
       sequelize.fn('ST_Distance',
-        sequelize.col('location'),
-        sequelize.fn('POINT', lat, long)
+          sequelize.col('location'),
+          sequelize.fn('POINT', lat, long),
       ),
-      'ASC'
+      'ASC',
     ]],
     where: {
       [Op.and]: [
         {
-          emotion_id: emotionId
+          emotion_id: emotionId,
         },
         {
-          category_id: categoryId
+          category_id: categoryId,
         },
         sequelize.where(sequelize.fn('ST_Distance',
-          sequelize.col('location'),
-          sequelize.fn('POINT', lat, long)
+            sequelize.col('location'),
+            sequelize.fn('POINT', lat, long),
         ),
         {
           [Op.gte]: minKilometer,
-          [Op.lte]: maxKilometer
-        })
-      ]
-    }
+          [Op.lte]: maxKilometer,
+        }),
+      ],
+    },
   });
 
   console.log(questions);
