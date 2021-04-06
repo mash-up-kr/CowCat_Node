@@ -46,14 +46,6 @@ CounselingQuestion.init(
         type: DataTypes.STRING(200),
         allowNull: false,
       },
-      latitude: {
-        type: DataTypes.DOUBLE,
-        allowNull: false,
-      },
-      longitude: {
-        type: DataTypes.DOUBLE,
-        allowNull: false,
-      },
       location: {
         type: DataTypes.GEOMETRY('POINT'),
         allowNull: false,

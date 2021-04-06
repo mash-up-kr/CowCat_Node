@@ -54,11 +54,11 @@ export const getQuestions = async (req, res, next) => {
 
   try {
     const questions = await questionService.getQuestions(
-      req.user,
-      minKilometer,
-      maxKilometer,
-      categoryId,
-      emotionId,
+        req.user,
+        minKilometer,
+        maxKilometer,
+        categoryId,
+        emotionId,
     );
     return res.status(201).json(Success(questions));
   } catch (err) {

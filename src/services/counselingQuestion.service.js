@@ -14,10 +14,10 @@ export const postQuestion = async (
     latitude,
     longitude,
 ) => {
-  var point = {
+  let point = {
     type: 'Point',
-    coordinates: [latitude,longitude],
-    //crs: { type: 'name', properties: { name: 'EPSG:4326'} }
+    coordinates: [latitude, longitude],
+    //  crs: { type: 'name', properties: { name: 'EPSG:4326'} }
   };
   const questions = await CounselingQuestion.create({
     title,
@@ -25,19 +25,17 @@ export const postQuestion = async (
     category_id: categoryId,
     emotion_id: emotionId,
     user_id: userId,
-    latitude,
-    longitude,
     location: sequelize.fn('POINT', point.coordinates),
   });
   return questions;
 };
 
 export const getQuestions = async (
-  user,
-  minKilometer,
-  maxKilometer,
-  categoryId,
-  emotionId,
+    user,
+    minKilometer,
+    maxKilometer,
+    categoryId,
+    emotionId,
 ) => {
   const lat = user.Location.latitude;
   const long = user.Location.longitude;
