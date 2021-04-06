@@ -45,10 +45,20 @@ export const postQuestion = async (req, res, next) => {
 };
 
 export const getQuestions = async (req, res, next) => {
+  const {
+    minKilometer,
+    maxKilometer,
+    categoryId,
+    emotionId,
+  } = req.body;
 
   try {
     const questions = await questionService.getQuestions(
       req.user,
+      minKilometer,
+      maxKilometer,
+      categoryId,
+      emotionId,
     );
     return res.status(201).json(Success(questions));
   } catch (err) {
