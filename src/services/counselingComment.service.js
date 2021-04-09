@@ -22,7 +22,6 @@ export const getComment = async ({commentId}) => {
   const result = await CounselingComment.findOne({
     where: {id: commentId},
   });
-  console.log(result);
   return result;
 };
 

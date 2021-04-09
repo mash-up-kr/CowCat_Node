@@ -15,7 +15,7 @@ export const postComment = async (req, res, next) => {
   }
   try {
     const result = await commentService.postComment({
-      questionId,
+      questionId: parseInt(questionId),
       content,
       userId,
     });
@@ -29,7 +29,9 @@ export const getComments = async (req, res, next) => {
   const {questionId} = req.params;
 
   try {
-    const result = await commentService.getComments({questionId});
+    const result = await commentService.getComments({
+      questionId: parseInt(questionId),
+    });
     return res.status(201).json(Success(result));
   } catch (err) {
     next(err);
@@ -40,6 +42,15 @@ export const putComment = async (req, res, next) => {
   const {commentId} = req.params;
   const {content} = req.body;
   const userId = req.user.id;
+  const comment = await commentService.getComment({commentId});
+
+  if (comment === null) {
+    return res.status(200).json(Failure('코멘트가 존재하지 않습니다.'));
+  }
+
+  if (comment.user_id !== userId) {
+    return res.status(200).json(Failure('코멘트 작성자가 아닙니다.'));
+  }
 
   if (typeof content !== 'string') {
     return res.status(200).json(Failure('문자열을 입력해주세요.'));
@@ -57,8 +68,8 @@ export const putComment = async (req, res, next) => {
       return res.status(200).json(Failure('존재하지 않는 코멘트입니다.'));
     }
 
-    const getComment = await commentService.getComment({commentId});
-    return res.status(201).json(getComment);
+    const comment = await commentService.getComment({commentId});
+    return res.status(201).json(Success(comment));
   } catch (err) {
     next(err);
   }
@@ -67,6 +78,16 @@ export const putComment = async (req, res, next) => {
 export const deleteComment = async (req, res, next) => {
   const {questionId, commentId} = req.params;
   const userId = req.user.id;
+  const comment = await commentService.getComment({commentId});
+
+  if (comment === null) {
+    return res.status(200).json(Failure('코멘트가 존재하지 않습니다.'));
+  }
+
+  if (comment.user_id !== userId) {
+    return res.status(200).json(Failure('코멘트 작성자가 아닙니다.'));
+  }
+
   try {
     const resultCode = await commentService.deleteComment({
       commentId,
@@ -75,9 +96,12 @@ export const deleteComment = async (req, res, next) => {
     if (resultCode === 0) {
       return res.status(200).json(Failure('존재하지 않는 코멘트입니다.'));
     }
-    return res
-        .status(201)
-        .json(Success({id: commentId, counselingQuestionId: questionId}));
+    return res.status(201).json(
+        Success({
+          id: parseInt(commentId),
+          counselingQuestionId: parseInt(questionId),
+        }),
+    );
   } catch (err) {
     next(err);
   }
