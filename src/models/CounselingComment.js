@@ -1,7 +1,7 @@
 import db from './sequelize.js';
 
-const { sequelize, Sequelize } = db;
-const { Model, DataTypes } = Sequelize;
+const {sequelize, Sequelize} = db;
+const {Model, DataTypes} = Sequelize;
 
 class CounselingComment extends Model {
   static associate(models) {
@@ -19,27 +19,27 @@ class CounselingComment extends Model {
 }
 
 CounselingComment.init(
-  {
-    id: {
-      type: DataTypes.BIGINT,
-      primaryKey: true,
-      allowNull: false,
-      autoIncrement: true,
+    {
+      id: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true,
+      },
+      content: {
+        type: DataTypes.STRING(200),
+        allowNull: false,
+      },
     },
-    content: {
-      type: DataTypes.STRING(200),
-      allowNull: false,
+    {
+      sequelize,
+      tableName: 'counseling_comments',
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_bin',
+      timestamps: true,
+      paranoid: true,
+      underscored: true,
     },
-  },
-  {
-    sequelize,
-    tableName: 'counseling_comments',
-    charset: 'utf8mb4',
-    collate: 'utf8mb4_bin',
-    timestamps: true,
-    paranoid: true,
-    underscored: true,
-  }
 );
 
 export default CounselingComment;
