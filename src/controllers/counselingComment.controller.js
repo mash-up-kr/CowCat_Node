@@ -48,7 +48,7 @@ export const putComment = async (req, res, next) => {
     return res.status(200).json(Failure('코멘트가 존재하지 않습니다.'));
   }
 
-  if (comment.user_id !== userId) {
+  if (comment.userId !== userId) {
     return res.status(200).json(Failure('코멘트 작성자가 아닙니다.'));
   }
 
@@ -84,7 +84,7 @@ export const deleteComment = async (req, res, next) => {
     return res.status(200).json(Failure('코멘트가 존재하지 않습니다.'));
   }
 
-  if (comment.user_id !== userId) {
+  if (comment.userId !== userId) {
     return res.status(200).json(Failure('코멘트 작성자가 아닙니다.'));
   }
 
