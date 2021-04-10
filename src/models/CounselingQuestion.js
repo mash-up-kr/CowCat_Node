@@ -23,7 +23,7 @@ class CounselingQuestion extends Model {
       as: 'Emotion',
     });
     this.hasMany(models.CounselingComment, {
-      foreignKey: 'counseling_question_id',
+      foreignKey: 'counselingQuestionId',
       sourceKey: 'id',
       as: 'CounselingQuestion',
     });

@@ -6,12 +6,12 @@ const {Model, DataTypes} = Sequelize;
 class CounselingComment extends Model {
   static associate(models) {
     this.belongsTo(models.User, {
-      foreignKey: 'user_id',
+      foreignKey: 'userId',
       targetKey: 'id',
       as: 'User',
     });
     this.belongsTo(models.CounselingQuestion, {
-      foreignKey: 'counseling_question_id',
+      foreignKey: 'counselingQuestionId',
       targetKey: 'id',
       as: 'CounselingQuestion',
     });
