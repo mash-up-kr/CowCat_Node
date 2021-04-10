@@ -1,3 +1,5 @@
+import counselingQuestionService from
+  '../services/counselingQuestion.service.js';
 import questionService from '../services/counselingQuestion.service.js';
 import {Success, Failure} from '../utils/response.js';
 
@@ -138,6 +140,27 @@ export const deleteQuestion = async (req, res, next) => {
         .status(201)
         .json(Success({id: questionId}));
   } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+export const getCategories = async (req, res, next) => {
+  try {
+    const categories = await counselingQuestionService.getCategories();
+
+    return res.status(200).json(Success(categories));
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getEmotions = async (req, res, next) => {
+  try {
+    const emotions = await counselingQuestionService.getEmotions();
+
+    return res.status(200).json(Success(emotions));
+  } catch (err) {
     next(err);
   }
 };
@@ -148,4 +171,6 @@ export default {
   getQuestions,
   putQuestion,
   deleteQuestion,
+  getCategories,
+  getEmotions,
 };
