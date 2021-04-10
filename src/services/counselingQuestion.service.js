@@ -3,7 +3,11 @@ const {Op} = sequelize;
 
 import models from '../models/index.js';
 
-const {CounselingQuestion} = models;
+const {
+  CounselingQuestion,
+  Category,
+  Emotion,
+} = models;
 
 export const postQuestion = async (
     title,
@@ -118,10 +122,34 @@ export const deleteQuestion = async (questionId) => {
   return questions;
 };
 
+export const getCategories = async () => {
+  const categories = await Category.findAll({
+    attributes: [
+      'id',
+      'key',
+    ],
+  });
+
+  return categories;
+};
+
+export const getEmotions = async () => {
+  const emotions = await Emotion.findAll({
+    attributes: [
+      'id',
+      'key',
+    ],
+  });
+
+  return emotions;
+};
+
 export default {
   postQuestion,
   getQuestion,
   getQuestions,
   putQuestion,
   deleteQuestion,
+  getCategories,
+  getEmotions,
 };
