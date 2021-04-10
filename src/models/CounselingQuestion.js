@@ -1,4 +1,5 @@
 import db from './sequelize.js';
+import enums from './data/enums.js';
 
 const {sequelize, Sequelize} = db;
 const {Model, DataTypes} = Sequelize;
@@ -8,24 +9,12 @@ class CounselingQuestion extends Model {
     this.belongsTo(models.User, {
       foreignKey: 'userId',
       targetKey: 'id',
-      as: 'User',
-    });
-
-    this.belongsTo(models.Category, {
-      foreignKey: 'categoryId',
-      targetKey: 'id',
-      as: 'Category',
-    });
-
-    this.belongsTo(models.Emotion, {
-      foreignKey: 'emotionId',
-      targetKey: 'id',
-      as: 'Emotion',
+      as: 'user',
     });
     this.hasMany(models.CounselingComment, {
       foreignKey: 'counselingQuestionId',
       sourceKey: 'id',
-      as: 'CounselingQuestion',
+      as: 'counselingQuestion',
     });
   }
 }
@@ -46,6 +35,12 @@ CounselingQuestion.init(
         type: DataTypes.STRING(200),
         allowNull: false,
       },
+      category: {
+        type: DataTypes.ENUM(...enums.category),
+      },
+      emotion: {
+        type: DataTypes.ENUM(...enums.emotion),
+      },
       location: {
         type: DataTypes.GEOMETRY('POINT'),
         allowNull: false,
@@ -59,6 +54,7 @@ CounselingQuestion.init(
       timestamps: true,
       paranoid: true,
       underscored: true,
+      indexes: [{unique: false, fields: ['emotion', 'category']}],
     },
 );
 

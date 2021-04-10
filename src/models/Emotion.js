@@ -8,7 +8,7 @@ class Emotion extends Model {
     this.hasMany(models.CounselingQuestion, {
       foreignKey: 'emotionId',
       sourceKey: 'id',
-      as: 'CounselingQuestion',
+      as: 'counselingQuestion',
     });
   }
 }

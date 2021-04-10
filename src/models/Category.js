@@ -8,7 +8,7 @@ class Category extends Model {
     this.hasMany(models.CounselingQuestion, {
       foreignKey: 'categoryId',
       sourceKey: 'id',
-      as: 'CounselingQuestion',
+      as: 'counselingQuestion',
     });
   }
 }

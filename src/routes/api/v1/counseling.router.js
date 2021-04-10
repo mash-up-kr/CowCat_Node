@@ -1,8 +1,7 @@
+/* eslint-disable max-len */
 import express from 'express';
-import commentController
-  from '../../../controllers/counselingComment.controller.js';
-import questionController
-  from '../../../controllers/counselingQuestion.controller.js';
+import commentController from '../../../controllers/counselingComment.controller.js';
+import questionController from '../../../controllers/counselingQuestion.controller.js';
 
 const router = new express.Router();
 
@@ -25,14 +24,14 @@ router
     .put(commentController.putComment)
     .delete(commentController.deleteComment);
 
-router.get(
-    '/categories',
-    questionController.getCategories,
-);
+// router.get(
+//     '/categories',
+//     questionController.getCategories,
+// );
 
-router.get(
-    '/emotions',
-    questionController.getEmotions,
-);
+// router.get(
+//     '/emotions',
+//     questionController.getEmotions,
+// );
 
 export default router;

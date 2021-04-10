@@ -7,19 +7,19 @@ class User extends Model {
   static associate(models) {
     this.hasOne(models.UserLocation, {
       foreignKey: 'userId',
-      as: 'Location',
+      as: 'location',
     });
 
     this.hasMany(models.CounselingQuestion, {
       foreignKey: 'userId',
       sourceKey: 'id',
-      as: 'CounselingQuestion',
+      as: 'counselingQuestion',
     });
 
     this.hasMany(models.CounselingComment, {
       foreignKey: 'userId',
       sourceKey: 'id',
-      as: 'CounselingComment',
+      as: 'counselingComment',
     });
   }
 }
