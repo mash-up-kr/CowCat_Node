@@ -23,7 +23,7 @@ class CounselingQuestion extends Model {
       as: 'Emotion',
     });
     this.hasMany(models.CounselingComment, {
-      foreignKey: 'counseling_question_id',
+      foreignKey: 'counselingQuestionId',
       sourceKey: 'id',
       as: 'CounselingQuestion',
     });
@@ -44,6 +44,10 @@ CounselingQuestion.init(
       },
       content: {
         type: DataTypes.STRING(200),
+        allowNull: false,
+      },
+      location: {
+        type: DataTypes.GEOMETRY('POINT'),
         allowNull: false,
       },
     },

@@ -11,13 +11,13 @@ class User extends Model {
     });
 
     this.hasMany(models.CounselingQuestion, {
-      foreignKey: 'user_id',
+      foreignKey: 'userId',
       sourceKey: 'id',
       as: 'CounselingQuestion',
     });
 
     this.hasMany(models.CounselingComment, {
-      foreignKey: 'user_id',
+      foreignKey: 'userId',
       sourceKey: 'id',
       as: 'CounselingComment',
     });
@@ -37,9 +37,7 @@ User.init(
         allowNull: false,
       },
       snsType: {
-        type: DataTypes.ENUM([
-          'kakao',
-        ]),
+        type: DataTypes.ENUM(['kakao']),
         allowNull: false,
       },
       nickname: {

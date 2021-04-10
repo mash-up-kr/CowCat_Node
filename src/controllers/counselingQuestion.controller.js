@@ -1,8 +1,18 @@
+import counselingQuestionService from
+  '../services/counselingQuestion.service.js';
 import questionService from '../services/counselingQuestion.service.js';
 import {Success, Failure} from '../utils/response.js';
 
 export const postQuestion = async (req, res, next) => {
-  const {title, content, categoryId, emotionId, userId} = req.body;
+  const userId = req.user.id;
+  const {
+    title,
+    content,
+    categoryId,
+    emotionId,
+    latitude,
+    longitude,
+  } = req.body;
 
   if (typeof title !== 'string' || typeof content !== 'string') {
     return res.status(200).json(Failure('문자열을 입력해주세요.'));
@@ -27,6 +37,8 @@ export const postQuestion = async (req, res, next) => {
         categoryId,
         emotionId,
         userId,
+        latitude,
+        longitude,
     );
     return res.status(201).json(Success(questions));
   } catch (err) {
@@ -35,8 +47,21 @@ export const postQuestion = async (req, res, next) => {
 };
 
 export const getQuestions = async (req, res, next) => {
+  const {
+    minKilometer,
+    maxKilometer,
+    categoryId,
+    emotionId,
+  } = req.body;
+
   try {
-    const questions = await questionService.getQuestions();
+    const questions = await questionService.getQuestions(
+        req.user,
+        minKilometer,
+        maxKilometer,
+        categoryId,
+        emotionId,
+    );
     return res.status(201).json(Success(questions));
   } catch (err) {
     next(err);
@@ -57,8 +82,14 @@ export const getQuestion = async (req, res, next) => {
 };
 
 export const putQuestion = async (req, res, next) => {
-  const {title, content, categoryId, emotionId, userId} = req.body;
+  const userId = req.user.id;
   const {questionId} = req.params;
+  const {
+    title,
+    content,
+    categoryId,
+    emotionId,
+  } = req.body;
 
   if (typeof title !== 'string' || typeof content !== 'string') {
     return res.status(200).json(Failure('문자열을 입력해주세요.'));
@@ -109,6 +140,27 @@ export const deleteQuestion = async (req, res, next) => {
         .status(201)
         .json(Success({id: questionId}));
   } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+export const getCategories = async (req, res, next) => {
+  try {
+    const categories = await counselingQuestionService.getCategories();
+
+    return res.status(200).json(Success(categories));
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getEmotions = async (req, res, next) => {
+  try {
+    const emotions = await counselingQuestionService.getEmotions();
+
+    return res.status(200).json(Success(emotions));
+  } catch (err) {
     next(err);
   }
 };
@@ -119,4 +171,6 @@ export default {
   getQuestions,
   putQuestion,
   deleteQuestion,
+  getCategories,
+  getEmotions,
 };

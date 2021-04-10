@@ -6,7 +6,7 @@ const {Model, DataTypes} = Sequelize;
 class Category extends Model {
   static associate(models) {
     this.hasMany(models.CounselingQuestion, {
-      foreignKey: 'category_id',
+      foreignKey: 'categoryId',
       sourceKey: 'id',
       as: 'CounselingQuestion',
     });
@@ -21,12 +21,8 @@ Category.init(
         allowNull: false,
         autoIncrement: true,
       },
-      name: {
-        type: DataTypes.STRING(20),
-        allowNull: false,
-      },
-      imageUrl: {
-        type: DataTypes.STRING(255),
+      key: {
+        type: DataTypes.STRING(40),
         allowNull: false,
       },
     },
@@ -37,7 +33,7 @@ Category.init(
       collate: 'utf8mb4_bin',
       timestamps: true,
       underscored: true,
-      indexes: [{unique: true, fields: ['name']}],
+      indexes: [{unique: true, fields: ['key']}],
     },
 );
 
