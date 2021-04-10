@@ -128,6 +128,9 @@ export const getCategories = async () => {
       'id',
       'key',
     ],
+    order: [
+      ['id', 'ASC'],
+    ],
   });
 
   return categories;
@@ -138,6 +141,9 @@ export const getEmotions = async () => {
     attributes: [
       'id',
       'key',
+    ],
+    order: [
+      ['id', 'ASC'],
     ],
   });
 
