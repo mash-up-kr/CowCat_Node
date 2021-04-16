@@ -38,8 +38,8 @@ export const getQuestions = async (
     category,
     emotion,
 ) => {
-  const lat = user.Location.latitude;
-  const long = user.Location.longitude;
+  const lat = user.userLocation.latitude;
+  const long = user.userLocation.longitude;
   const conditions = [
     sequelize.where(
         sequelize.fn(
