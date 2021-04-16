@@ -8,12 +8,12 @@ class CounselingComment extends Model {
     this.belongsTo(models.User, {
       foreignKey: 'userId',
       targetKey: 'id',
-      as: 'User',
+      as: 'user',
     });
     this.belongsTo(models.CounselingQuestion, {
       foreignKey: 'counselingQuestionId',
       targetKey: 'id',
-      as: 'CounselingQuestion',
+      as: 'counselingQuestion',
     });
   }
 }

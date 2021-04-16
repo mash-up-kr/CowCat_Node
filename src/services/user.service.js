@@ -74,7 +74,9 @@ export const editProfile = async (
     const nowYear = new Date().getFullYear();
 
     if (birthdayYearInt > nowYear) {
-      throw new Error(`birthdayYear 필드는 현재 년도보다 작거나 같아야 합니다.`);
+      throw new Error(
+          `birthdayYear 필드는 현재 년도보다 작거나 같아야 합니다.`,
+      );
     }
 
     const birthdayDate = new Date(birthdayYearInt, 0, 1, 0, 0, 0, 0);
@@ -110,11 +112,9 @@ export const isCreatableNickname = async (nickname) => {
   }
 
   const getNicknameUser = await User.findOne({
-    attributes: [
-      'id',
-    ],
+    attributes: ['id'],
     where: {
-      'nickname': {
+      nickname: {
         [Op.eq]: nickname,
       },
     },
@@ -140,17 +140,17 @@ export const getUserBySnsAuth = async (snsId, snsType) => {
       'imageUrl',
     ],
     where: {
-      'snsId': {
+      snsId: {
         [Op.eq]: snsId,
       },
-      'snsType': {
+      snsType: {
         [Op.eq]: snsType,
       },
     },
     include: [
       {
         model: UserLocation,
-        as: 'Location',
+        as: 'userLocation',
         required: false,
       },
     ],
@@ -171,20 +171,16 @@ export const getUserById = async (userId) => {
       'imageUrl',
     ],
     where: {
-      'id': {
+      id: {
         [Op.eq]: userId,
       },
     },
     include: [
       {
         model: UserLocation,
-        as: 'Location',
+        as: 'userLocation',
         required: false,
-        attributes: [
-          'id',
-          'latitude',
-          'longitude',
-        ],
+        attributes: ['id', 'latitude', 'longitude'],
       },
     ],
   });

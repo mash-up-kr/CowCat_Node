@@ -1,18 +1,11 @@
-import counselingQuestionService from
-  '../services/counselingQuestion.service.js';
+/* eslint-disable max-len */
 import questionService from '../services/counselingQuestion.service.js';
 import {Success, Failure} from '../utils/response.js';
+import enums from '../models/data/enums.js';
 
 export const postQuestion = async (req, res, next) => {
   const userId = req.user.id;
-  const {
-    title,
-    content,
-    categoryId,
-    emotionId,
-    latitude,
-    longitude,
-  } = req.body;
+  const {title, content, category, emotion, latitude, longitude} = req.body;
 
   if (typeof title !== 'string' || typeof content !== 'string') {
     return res.status(200).json(Failure('문자열을 입력해주세요.'));
@@ -23,19 +16,23 @@ export const postQuestion = async (req, res, next) => {
   if (content.length > 200) {
     return res.status(200).json(Failure('고민 내용은 최대 200자 입니다.'));
   }
-  if (categoryId === null) {
-    return res.status(200).json(Failure('고민 카테고리를 선택해주세요.'));
+  if (!enums.category.includes(category)) {
+    return res
+        .status(200)
+        .json(Failure('고민 카테고리 값을 확인해주세요. : ' + enums.category));
   }
-  if (emotionId === null) {
-    return res.status(200).json(Failure('현재 기분을 선택해주세요.'));
+  if (!enums.emotion.includes(emotion)) {
+    return res
+        .status(200)
+        .json(Failure('감정의 값을 확인해주세요. : ' + enums.emotion));
   }
 
   try {
     const questions = await questionService.postQuestion(
         title,
         content,
-        categoryId,
-        emotionId,
+        category,
+        emotion,
         userId,
         latitude,
         longitude,
@@ -47,20 +44,29 @@ export const postQuestion = async (req, res, next) => {
 };
 
 export const getQuestions = async (req, res, next) => {
-  const {
-    minKilometer,
-    maxKilometer,
-    categoryId,
-    emotionId,
-  } = req.body;
+  const {minKilometer, maxKilometer, category, emotion} = req.body;
+
+  if (category != null && !enums.category.includes(category)) {
+    return res
+        .status(200)
+        .json(Failure('고민 카테고리 값을 확인해주세요. : ' + enums.category));
+  }
+  if (emotion != null && !enums.emotion.includes(emotion)) {
+    return res
+        .status(200)
+        .json(Failure('감정의 값을 확인해주세요. : ' + enums.emotion));
+  }
+  if (!req.user.userLocation) {
+    return res.status(200).json(Failure('User의 위치값이 없습니다.'));
+  }
 
   try {
     const questions = await questionService.getQuestions(
         req.user,
         minKilometer,
         maxKilometer,
-        categoryId,
-        emotionId,
+        category,
+        emotion,
     );
     return res.status(201).json(Success(questions));
   } catch (err) {
@@ -72,10 +78,10 @@ export const getQuestion = async (req, res, next) => {
   const {questionId} = req.params;
 
   try {
-    const questions = await questionService.getQuestion(
-        questionId,
-    );
-    return res.status(201).json(Success(questions));
+    const question = await questionService.getQuestion(questionId);
+    // const { dataValues } = await getUserById(question.userId);
+    // question.dataValues.user = dataValues;
+    return res.status(201).json(Success(question));
   } catch (err) {
     next(err);
   }
@@ -84,12 +90,7 @@ export const getQuestion = async (req, res, next) => {
 export const putQuestion = async (req, res, next) => {
   const userId = req.user.id;
   const {questionId} = req.params;
-  const {
-    title,
-    content,
-    categoryId,
-    emotionId,
-  } = req.body;
+  const {title, content, category, emotion} = req.body;
 
   if (typeof title !== 'string' || typeof content !== 'string') {
     return res.status(200).json(Failure('문자열을 입력해주세요.'));
@@ -100,11 +101,15 @@ export const putQuestion = async (req, res, next) => {
   if (content.length > 200) {
     return res.status(200).json(Failure('고민 내용은 최대 200자 입니다.'));
   }
-  if (categoryId === null) {
-    return res.status(200).json(Failure('고민 카테고리를 선택해주세요.'));
+  if (category != null && !enums.category.includes(category)) {
+    return res
+        .status(200)
+        .json(Failure('고민 카테고리 값을 확인해주세요. : ' + enums.category));
   }
-  if (emotionId === null) {
-    return res.status(200).json(Failure('현재 기분을 선택해주세요.'));
+  if (emotion != null && !enums.emotion.includes(emotion)) {
+    return res
+        .status(200)
+        .json(Failure('감정의 값을 확인해주세요. : ' + enums.emotion));
   }
 
   try {
@@ -112,8 +117,8 @@ export const putQuestion = async (req, res, next) => {
         questionId,
         title,
         content,
-        categoryId,
-        emotionId,
+        category,
+        emotion,
         userId,
     );
     if (questions === 0) {
@@ -130,21 +135,17 @@ export const putQuestion = async (req, res, next) => {
 export const deleteQuestion = async (req, res, next) => {
   const {questionId} = req.params;
   try {
-    const resultCode = await questionService.deleteQuestion(
-        questionId,
-    );
+    const resultCode = await questionService.deleteQuestion(questionId);
     if (resultCode === 0) {
       return res.status(200).json(Failure('존재하지 않는 고민입니다.'));
     }
-    return res
-        .status(201)
-        .json(Success({id: questionId}));
+    return res.status(201).json(Success({id: questionId}));
   } catch (err) {
-    console.log(err);
     next(err);
   }
 };
 
+/* Dprecated
 export const getCategories = async (req, res, next) => {
   try {
     const categories = await counselingQuestionService.getCategories();
@@ -164,6 +165,7 @@ export const getEmotions = async (req, res, next) => {
     next(err);
   }
 };
+*/
 
 export default {
   postQuestion,
@@ -171,6 +173,6 @@ export default {
   getQuestions,
   putQuestion,
   deleteQuestion,
-  getCategories,
-  getEmotions,
+  // getCategories,
+  // getEmotions,
 };

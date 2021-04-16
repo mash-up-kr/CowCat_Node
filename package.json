@@ -8,7 +8,8 @@
     "lint": "eslint src",
     "start": "cross-env NODE_ENV=development nodemon src/index.js",
     "start_test": "cross-env NODE_ENV=test nodemon src/index.js",
-    "deploy": "cross-env NODE_ENV=production nodemon src/index.js"
+    "deploy": "cross-env NODE_ENV=production nodemon src/index.js",
+    "fix": "npx eslint ./src --fix"
   },
   "repository": {
     "type": "git",
