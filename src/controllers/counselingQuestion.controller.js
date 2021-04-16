@@ -56,6 +56,9 @@ export const getQuestions = async (req, res, next) => {
         .status(200)
         .json(Failure('감정의 값을 확인해주세요. : ' + enums.emotion));
   }
+  if (!req.user.userLocation) {
+    return res.status(200).json(Failure('User의 위치값이 없습니다.'));
+  }
 
   try {
     const questions = await questionService.getQuestions(

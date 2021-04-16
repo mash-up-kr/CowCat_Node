@@ -7,6 +7,7 @@ class UserLocation extends Model {
   static associate(models) {
     this.belongsTo(models.User, {
       foreignKey: 'userId',
+      targetKey: 'id',
       as: 'user',
     });
   }

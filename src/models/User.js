@@ -7,7 +7,8 @@ class User extends Model {
   static associate(models) {
     this.hasOne(models.UserLocation, {
       foreignKey: 'userId',
-      as: 'location',
+      sourceKey: 'id',
+      as: 'userLocation',
     });
 
     this.hasMany(models.CounselingQuestion, {
