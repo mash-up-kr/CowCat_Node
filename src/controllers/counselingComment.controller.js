@@ -107,9 +107,20 @@ export const deleteComment = async (req, res, next) => {
   }
 };
 
+export const getCommentsByUserId = async (req, res, next) => {
+  const userId = req.user.id;
+  try {
+    const comments = await commentService.getCommentsByUserId(userId);
+    return res.status(201).json(Success(comments));
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   postComment,
   getComments,
   putComment,
   deleteComment,
+  getCommentsByUserId,
 };
