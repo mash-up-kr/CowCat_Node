@@ -1,5 +1,8 @@
+import sequelize from 'sequelize';
+import CounselingQuestion from '../models/CounselingQuestion.js';
 import models from '../models/index.js';
 import User from '../models/User.js';
+import enums from '../models/data/enums.js';
 
 const {CounselingComment} = models;
 
@@ -52,10 +55,38 @@ export const deleteComment = async ({commentId, userId}) => {
   return result;
 };
 
+export const getCommentsByUserId = async (userId) => {
+  const commentTableAttributes = Object.keys(CounselingComment.tableAttributes);
+  const comments = await CounselingComment.findAll({
+    where: {userId},
+    attributes: [
+      ...commentTableAttributes,
+      [sequelize.col('counselingQuestion.category'), 'category'],
+    ],
+    include: [
+      {
+        model: CounselingQuestion,
+        as: 'counselingQuestion',
+        required: true,
+        attributes: [],
+      },
+    ],
+    order: ['id'],
+  });
+  const result = {};
+  enums.category.forEach((key) => (result[key] = []));
+  comments.forEach((comment) => {
+    console.log(comment);
+    result[comment.dataValues.category].push(comment);
+  });
+  return result;
+};
+
 export default {
   postComment,
   getComments,
   getComment,
   putComment,
   deleteComment,
+  getCommentsByUserId,
 };
