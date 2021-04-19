@@ -145,6 +145,16 @@ export const deleteQuestion = async (req, res, next) => {
   }
 };
 
+export const getMyQuestions = async (req, res, next) => {
+  const userId = req.user.id;
+  try {
+    const questions = await questionService.getMyQuestions(userId);
+    return res.status(201).json(Success(questions));
+  } catch (err) {
+    next(err);
+  }
+};
+
 /* Dprecated
 export const getCategories = async (req, res, next) => {
   try {
@@ -173,6 +183,7 @@ export default {
   getQuestions,
   putQuestion,
   deleteQuestion,
+  getMyQuestions,
   // getCategories,
   // getEmotions,
 };

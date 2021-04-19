@@ -9,6 +9,9 @@ router
     .route('/')
     .get(questionController.getQuestions)
     .post(questionController.postQuestion);
+
+router.route('/my').get(questionController.getMyQuestions);
+
 router
     .route('/:questionId(\\d+)')
     .get(questionController.getQuestion)

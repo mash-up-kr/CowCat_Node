@@ -14,7 +14,7 @@ class CounselingQuestion extends Model {
     this.hasMany(models.CounselingComment, {
       foreignKey: 'counselingQuestionId',
       sourceKey: 'id',
-      as: 'counselingQuestion',
+      as: 'counselingComment',
     });
   }
 }
