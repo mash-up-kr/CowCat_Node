@@ -17,12 +17,15 @@ export const getKakaoCallback = async (req, res, next) => {
   params.append('client_id', process.env.KAKAO_REST_API_KEY);
 
   try {
-    const result = await axios.post(`https://kauth.kakao.com/oauth/token`,
-        params, {
+    const result = await axios.post(
+        `https://kauth.kakao.com/oauth/token`,
+        params,
+        {
           headers: {
             'Content-Type': `application/x-www-form-urlencoded`,
           },
-        });
+        },
+    );
 
     const {access_token: accessToken} = result.data;
 
@@ -53,7 +56,7 @@ export const postLogin = async (req, res, next) => {
 
     res.status(200).json(jsonResult);
   } catch (err) {
-    res.status(200).json(Failure('토큰이 만료되었습니다.'));
+    res.status(401).json(Failure('토큰이 만료되었습니다.', 401));
   }
 };
 

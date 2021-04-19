@@ -5,9 +5,9 @@ export const Success = (data) => {
   };
 };
 
-export const Failure = (error) => {
+export const Failure = (error, code = 0) => {
   return {
-    code: 0,
+    code,
     error,
   };
 };
