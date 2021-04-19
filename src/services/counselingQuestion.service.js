@@ -1,4 +1,6 @@
 import sequelize from 'sequelize';
+import CounselingComment from '../models/CounselingComment.js';
+import enums from '../models/data/enums.js';
 const {Op} = sequelize;
 
 import models from '../models/index.js';
@@ -20,7 +22,7 @@ export const postQuestion = async (
     coordinates: [latitude, longitude],
     //  crs: { type: 'name', properties: { name: 'EPSG:4326'} }
   };
-  const questions = await CounselingQuestion.create({
+  const question = await CounselingQuestion.create({
     title,
     content,
     category,
@@ -28,7 +30,8 @@ export const postQuestion = async (
     userId,
     location: sequelize.fn('POINT', point.coordinates),
   });
-  return questions;
+  question.location = point;
+  return question;
 };
 
 export const getQuestions = async (
@@ -131,6 +134,38 @@ export const deleteQuestion = async (questionId) => {
   return questions;
 };
 
+export const getMyQuestions = async (userId) => {
+  const questionTableAttributes = Object.keys(
+      CounselingQuestion.tableAttributes,
+  );
+  const questions = await CounselingQuestion.findAll({
+    where: {userId},
+    attributes: [
+      ...questionTableAttributes,
+      [
+        sequelize.fn('COUNT', sequelize.col('counselingComment.id')),
+        'commentCount',
+      ],
+    ],
+    include: [
+      {
+        model: CounselingComment,
+        as: 'counselingComment',
+        required: false,
+        attributes: [],
+      },
+    ],
+    order: ['id'],
+    group: ['id'],
+  });
+  const result = {};
+  enums.category.forEach((key) => (result[key] = []));
+  questions.forEach((question) => {
+    result[question.dataValues.category].push(question);
+  });
+  return result;
+};
+
 /* Deprecated
 export const getCategories = async () => {
   const categories = await Category.findAll({
@@ -157,6 +192,7 @@ export default {
   getQuestions,
   putQuestion,
   deleteQuestion,
+  getMyQuestions,
   //  getCategories,
   //  getEmotions,
 };

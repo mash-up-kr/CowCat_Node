@@ -76,7 +76,6 @@ export const getCommentsByUserId = async (userId) => {
   const result = {};
   enums.category.forEach((key) => (result[key] = []));
   comments.forEach((comment) => {
-    console.log(comment);
     result[comment.dataValues.category].push(comment);
   });
   return result;
