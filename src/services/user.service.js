@@ -90,8 +90,8 @@ export const editProfile = async (
   if (location !== null) {
     const {latitude, longitude} = location;
 
-    if (user.Location === null) {
-      user.dataValues.userLocation = await user.createLocation({
+    if (user.userLocation === null) {
+      user.dataValues.userLocation = await user.createUserLocation({
         longitude,
         latitude,
       });
