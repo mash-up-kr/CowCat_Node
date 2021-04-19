@@ -86,6 +86,7 @@ export const editProfile = async (
   if (imageUrl !== null) {
     user.imageUrl = imageUrl;
   }
+
   if (location !== null) {
     const {latitude, longitude} = location;
 
@@ -95,8 +96,9 @@ export const editProfile = async (
         latitude,
       });
     } else {
-      user.dataValues.userLocation.latitude = latitude;
-      user.dataValues.userLocation.longitude = longitude;
+      user.userLocation.latitude = latitude;
+      user.userLocation.longitude = longitude;
+      await user.userLocation.save();
     }
   }
 
