@@ -188,26 +188,6 @@ export const getMyQuestions = async (userId) => {
   return result;
 };
 
-/* Deprecated
-export const getCategories = async () => {
-  const categories = await Category.findAll({
-    attributes: ['id', 'key'],
-    order: [['id', 'ASC']],
-  });
-
-  return categories;
-};
-
-export const getEmotions = async () => {
-  const emotions = await Emotion.findAll({
-    attributes: ['id', 'key'],
-    order: [['id', 'ASC']],
-  });
-
-  return emotions;
-};
-*/
-
 export default {
   postQuestion,
   getQuestion,
@@ -215,6 +195,4 @@ export default {
   putQuestion,
   deleteQuestion,
   getMyQuestions,
-  //  getCategories,
-  //  getEmotions,
 };
