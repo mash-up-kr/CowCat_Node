@@ -30,7 +30,14 @@ export const postQuestion = async (
     userId,
     location: sequelize.fn('POINT', point.coordinates),
   });
-  question.location = point;
+  const coordinates = {
+    latitude: question.location.args[0][0],
+    longitude: question.location.args[0][1],
+  };
+  question.location = {
+    type: 'Point',
+    coordinates,
+  };
   return question;
 };
 
@@ -87,11 +94,18 @@ export const getQuestions = async (
       [Op.and]: conditions,
     },
   });
+  questions.forEach((question) => {
+    const coordinates = {
+      latitude: question.location.coordinates[0],
+      longitude: question.location.coordinates[1],
+    };
+    question.location.coordinates = coordinates;
+  });
   return questions;
 };
 
 export const getQuestion = async (questionId) => {
-  const questions = await CounselingQuestion.findOne({
+  const question = await CounselingQuestion.findOne({
     where: {id: questionId},
     include: [
       {
@@ -101,7 +115,12 @@ export const getQuestion = async (questionId) => {
       },
     ],
   });
-  return questions;
+  const coordinates = {
+    latitude: question.location.coordinates[0],
+    longitude: question.location.coordinates[1],
+  };
+  question.location.coordinates = coordinates;
+  return question;
 };
 
 export const putQuestion = async (
@@ -135,18 +154,16 @@ export const deleteQuestion = async (questionId) => {
 };
 
 export const getMyQuestions = async (userId) => {
-  const questionTableAttributes = Object.keys(
-      CounselingQuestion.tableAttributes,
-  );
   const questions = await CounselingQuestion.findAll({
     where: {userId},
-    attributes: [
-      ...questionTableAttributes,
-      [
-        sequelize.fn('COUNT', sequelize.col('counselingComment.id')),
-        'commentCount',
+    attributes: {
+      include: [
+        [
+          sequelize.fn('COUNT', sequelize.col('counselingComment.id')),
+          'commentCount',
+        ],
       ],
-    ],
+    },
     include: [
       {
         model: CounselingComment,
@@ -161,6 +178,11 @@ export const getMyQuestions = async (userId) => {
   const result = {};
   enums.category.forEach((key) => (result[key] = []));
   questions.forEach((question) => {
+    const coordinates = {
+      latitude: question.location.coordinates[0],
+      longitude: question.location.coordinates[1],
+    };
+    question.location.coordinates = coordinates;
     result[question.dataValues.category].push(question);
   });
   return result;
