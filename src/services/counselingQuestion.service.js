@@ -43,23 +43,28 @@ export const postQuestion = async (
 
 export const getQuestions = async (
     user,
-    minKilometer,
-    maxKilometer,
+    minKilometerInteger,
+    maxKilometerInteger,
     category,
     emotion,
 ) => {
-  const lat = user.userLocation.latitude;
-  const long = user.userLocation.longitude;
+  const userLatitude = user.userLocation.latitude;
+  const userLongitude = user.userLocation.longitude;
+
+  // 1km : 0.012 이므로 정수형 km 으로 받은 단위를 변환합니다.
+  minKilometerInteger *= 0.012;
+  maxKilometerInteger *= 0.012;
+
   const conditions = [
     sequelize.where(
         sequelize.fn(
             'ST_Distance',
             sequelize.col('location'),
-            sequelize.fn('POINT', lat, long),
+            sequelize.fn('POINT', userLatitude, userLongitude),
         ),
         {
-          [Op.gte]: minKilometer,
-          [Op.lte]: maxKilometer,
+          [Op.gte]: minKilometerInteger,
+          [Op.lte]: maxKilometerInteger,
         },
     ),
   ];
@@ -74,7 +79,7 @@ export const getQuestions = async (
           sequelize.fn(
               'ST_Distance',
               sequelize.col('location'),
-              sequelize.fn('POINT', lat, long),
+              sequelize.fn('POINT', userLatitude, userLongitude),
           ),
           'distance',
         ],
@@ -85,7 +90,7 @@ export const getQuestions = async (
         sequelize.fn(
             'ST_Distance',
             sequelize.col('location'),
-            sequelize.fn('POINT', lat, long),
+            sequelize.fn('POINT', userLatitude, userLongitude),
         ),
         'ASC',
       ],
@@ -94,24 +99,43 @@ export const getQuestions = async (
       [Op.and]: conditions,
     },
   });
+
   questions.forEach((question) => {
     const coordinates = {
       latitude: question.location.coordinates[0],
       longitude: question.location.coordinates[1],
     };
-    question.location.coordinates = coordinates;
+    question.location = coordinates;
+
+    // 1km : 0.012 이므로, km 단위로 보내주기 위해 나누고, 소수점 세 자리까지 출력합니다.
+    question.dataValues.distance /= 0.012;
+    question.dataValues.distance = Math.round(
+        question.dataValues.distance * 1000.0,
+    ) / 1000.0;
   });
   return questions;
 };
 
 export const getQuestion = async (questionId) => {
   const question = await CounselingQuestion.findOne({
+    attributes: [
+      'id',
+      'title',
+      'content',
+      'category',
+      'emotion',
+      'location',
+    ],
     where: {id: questionId},
     include: [
       {
         model: User,
         as: 'user',
-        attributes: ['id', 'nickname'],
+        attributes: [
+          'id',
+          'nickname',
+          'imageUrl',
+        ],
       },
     ],
   });
@@ -119,31 +143,33 @@ export const getQuestion = async (questionId) => {
     latitude: question.location.coordinates[0],
     longitude: question.location.coordinates[1],
   };
-  question.location.coordinates = coordinates;
+  question.location = coordinates;
   return question;
 };
 
 export const putQuestion = async (
+    user,
     questionId,
     title,
     content,
     category,
     emotion,
-    userId,
 ) => {
-  const questions = await CounselingQuestion.update(
+  const updateQuestions = await CounselingQuestion.update(
       {
         title,
         content,
         category,
         emotion,
-        userId,
       },
       {
-        where: {id: questionId},
+        where: {
+          id: questionId,
+          userId: user.id,
+        },
       },
   );
-  return questions;
+  return updateQuestions;
 };
 
 export const deleteQuestion = async (questionId) => {
