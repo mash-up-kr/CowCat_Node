@@ -155,28 +155,6 @@ export const getMyQuestions = async (req, res, next) => {
   }
 };
 
-/* Dprecated
-export const getCategories = async (req, res, next) => {
-  try {
-    const categories = await counselingQuestionService.getCategories();
-
-    return res.status(200).json(Success(categories));
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const getEmotions = async (req, res, next) => {
-  try {
-    const emotions = await counselingQuestionService.getEmotions();
-
-    return res.status(200).json(Success(emotions));
-  } catch (err) {
-    next(err);
-  }
-};
-*/
-
 export default {
   postQuestion,
   getQuestion,
@@ -184,6 +162,4 @@ export default {
   putQuestion,
   deleteQuestion,
   getMyQuestions,
-  // getCategories,
-  // getEmotions,
 };
