@@ -56,13 +56,11 @@ export const deleteComment = async ({commentId, userId}) => {
 };
 
 export const getCommentsByUserId = async (userId) => {
-  const commentTableAttributes = Object.keys(CounselingComment.tableAttributes);
   const comments = await CounselingComment.findAll({
     where: {userId},
-    attributes: [
-      ...commentTableAttributes,
-      [sequelize.col('counselingQuestion.category'), 'category'],
-    ],
+    attributes: {
+      include: [[sequelize.col('counselingQuestion.category'), 'category']],
+    },
     include: [
       {
         model: CounselingQuestion,
