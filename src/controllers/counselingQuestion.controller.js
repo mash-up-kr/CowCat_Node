@@ -38,9 +38,6 @@ export const postQuestion = async (req, res, next) => {
         longitude,
     );
 
-    const coordinates = createQuestion.dataValues.location.coordinates;
-    createQuestion.dataValues.location = coordinates;
-
     return res.status(201).json(Success(createQuestion));
   } catch (err) {
     next(err);
