@@ -28,7 +28,7 @@ export const postQuestion = async (req, res, next) => {
   }
 
   try {
-    const questions = await questionService.postQuestion(
+    const createQuestion = await questionService.postQuestion(
         title,
         content,
         category,
@@ -37,14 +37,18 @@ export const postQuestion = async (req, res, next) => {
         latitude,
         longitude,
     );
-    return res.status(201).json(Success(questions));
+
+    const coordinates = createQuestion.dataValues.location.coordinates;
+    createQuestion.dataValues.location = coordinates;
+
+    return res.status(201).json(Success(createQuestion));
   } catch (err) {
     next(err);
   }
 };
 
 export const getQuestions = async (req, res, next) => {
-  const {minKilometer, maxKilometer, category, emotion} = req.body;
+  const {minKilometer, maxKilometer, category, emotion} = req.query;
 
   if (category != null && !enums.category.includes(category)) {
     return res
@@ -88,7 +92,6 @@ export const getQuestion = async (req, res, next) => {
 };
 
 export const putQuestion = async (req, res, next) => {
-  const userId = req.user.id;
   const {questionId} = req.params;
   const {title, content, category, emotion} = req.body;
 
@@ -114,14 +117,15 @@ export const putQuestion = async (req, res, next) => {
 
   try {
     const questions = await questionService.putQuestion(
+        req.user,
         questionId,
         title,
         content,
         category,
         emotion,
-        userId,
     );
-    if (questions === 0) {
+
+    if (questions[0] === 0) {
       return res.status(200).json(Failure('존재하지 않는 고민입니다.'));
     }
 
@@ -155,28 +159,6 @@ export const getMyQuestions = async (req, res, next) => {
   }
 };
 
-/* Dprecated
-export const getCategories = async (req, res, next) => {
-  try {
-    const categories = await counselingQuestionService.getCategories();
-
-    return res.status(200).json(Success(categories));
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const getEmotions = async (req, res, next) => {
-  try {
-    const emotions = await counselingQuestionService.getEmotions();
-
-    return res.status(200).json(Success(emotions));
-  } catch (err) {
-    next(err);
-  }
-};
-*/
-
 export default {
   postQuestion,
   getQuestion,
@@ -184,6 +166,4 @@ export default {
   putQuestion,
   deleteQuestion,
   getMyQuestions,
-  // getCategories,
-  // getEmotions,
 };
