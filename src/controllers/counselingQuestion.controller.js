@@ -139,7 +139,10 @@ export const putQuestion = async (req, res, next) => {
 export const deleteQuestion = async (req, res, next) => {
   const {questionId} = req.params;
   try {
-    const resultCode = await questionService.deleteQuestion(questionId);
+    const resultCode = await questionService.deleteQuestion(
+        req.user,
+        questionId,
+    );
     if (resultCode === 0) {
       return res.status(200).json(Failure('존재하지 않는 고민입니다.'));
     }
