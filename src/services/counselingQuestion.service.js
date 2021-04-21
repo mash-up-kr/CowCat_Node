@@ -34,10 +34,7 @@ export const postQuestion = async (
     latitude: question.location.args[0][0],
     longitude: question.location.args[0][1],
   };
-  question.location = {
-    type: 'Point',
-    coordinates,
-  };
+  question.location = coordinates;
   return question;
 };
 
@@ -109,33 +106,21 @@ export const getQuestions = async (
 
     // 1km : 0.012 이므로, km 단위로 보내주기 위해 나누고, 소수점 세 자리까지 출력합니다.
     question.dataValues.distance /= 0.012;
-    question.dataValues.distance = Math.round(
-        question.dataValues.distance * 1000.0,
-    ) / 1000.0;
+    question.dataValues.distance =
+      Math.round(question.dataValues.distance * 1000.0) / 1000.0;
   });
   return questions;
 };
 
 export const getQuestion = async (questionId) => {
   const question = await CounselingQuestion.findOne({
-    attributes: [
-      'id',
-      'title',
-      'content',
-      'category',
-      'emotion',
-      'location',
-    ],
+    attributes: ['id', 'title', 'content', 'category', 'emotion', 'location'],
     where: {id: questionId},
     include: [
       {
         model: User,
         as: 'user',
-        attributes: [
-          'id',
-          'nickname',
-          'imageUrl',
-        ],
+        attributes: ['id', 'nickname', 'imageUrl'],
       },
     ],
   });
@@ -172,9 +157,9 @@ export const putQuestion = async (
   return updateQuestions;
 };
 
-export const deleteQuestion = async (questionId) => {
+export const deleteQuestion = async (user, questionId) => {
   const questions = await CounselingQuestion.destroy({
-    where: {id: questionId},
+    where: {id: questionId, userId: user.id},
   });
   return questions;
 };
@@ -208,7 +193,7 @@ export const getMyQuestions = async (userId) => {
       latitude: question.location.coordinates[0],
       longitude: question.location.coordinates[1],
     };
-    question.location.coordinates = coordinates;
+    question.location = coordinates;
     result[question.dataValues.category].push(question);
   });
   return result;
