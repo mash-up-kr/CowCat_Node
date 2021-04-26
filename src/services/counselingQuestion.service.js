@@ -80,6 +80,10 @@ export const getQuestions = async (
           ),
           'distance',
         ],
+        [
+          sequelize.fn('COUNT', sequelize.col('counselingComment.id')),
+          'commentCount',
+        ],
       ],
     },
     order: [
@@ -92,17 +96,28 @@ export const getQuestions = async (
         'ASC',
       ],
     ],
+    group: ['id'],
     where: {
       [Op.and]: conditions,
     },
+    include: [
+      {
+        model: CounselingComment,
+        as: 'counselingComment',
+        required: false,
+        attributes: [],
+      },
+    ],
   });
 
   questions.forEach((question) => {
-    const coordinates = {
-      latitude: question.location.coordinates[0],
-      longitude: question.location.coordinates[1],
-    };
-    question.location = coordinates;
+    if (question.id != null) {
+      const coordinates = {
+        latitude: question.location.coordinates[0],
+        longitude: question.location.coordinates[1],
+      };
+      question.location = coordinates;
+    }
 
     // 1km : 0.012 이므로, km 단위로 보내주기 위해 나누고, 소수점 세 자리까지 출력합니다.
     question.dataValues.distance /= 0.012;
@@ -114,7 +129,18 @@ export const getQuestions = async (
 
 export const getQuestion = async (questionId) => {
   const question = await CounselingQuestion.findOne({
-    attributes: ['id', 'title', 'content', 'category', 'emotion', 'location'],
+    attributes: [
+      'id',
+      'title',
+      'content',
+      'category',
+      'emotion',
+      'location',
+      [
+        sequelize.fn('COUNT', sequelize.col('counselingComment.id')),
+        'commentCount',
+      ],
+    ],
     where: {id: questionId},
     include: [
       {
@@ -122,13 +148,21 @@ export const getQuestion = async (questionId) => {
         as: 'user',
         attributes: ['id', 'nickname', 'imageUrl'],
       },
+      {
+        model: CounselingComment,
+        as: 'counselingComment',
+        required: false,
+        attributes: [],
+      },
     ],
   });
-  const coordinates = {
-    latitude: question.location.coordinates[0],
-    longitude: question.location.coordinates[1],
-  };
-  question.location = coordinates;
+  if (question.id != null) {
+    const coordinates = {
+      latitude: question.location.coordinates[0],
+      longitude: question.location.coordinates[1],
+    };
+    question.location = coordinates;
+  }
   return question;
 };
 
@@ -189,12 +223,14 @@ export const getMyQuestions = async (userId) => {
   const result = {};
   enums.category.forEach((key) => (result[key] = []));
   questions.forEach((question) => {
-    const coordinates = {
-      latitude: question.location.coordinates[0],
-      longitude: question.location.coordinates[1],
-    };
-    question.location = coordinates;
-    result[question.dataValues.category].push(question);
+    if (question.id != null) {
+      const coordinates = {
+        latitude: question.location.coordinates[0],
+        longitude: question.location.coordinates[1],
+      };
+      question.location = coordinates;
+      result[question.dataValues.category].push(question);
+    }
   });
   return result;
 };
