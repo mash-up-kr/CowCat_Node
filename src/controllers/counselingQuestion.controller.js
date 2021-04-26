@@ -80,8 +80,6 @@ export const getQuestion = async (req, res, next) => {
 
   try {
     const question = await questionService.getQuestion(questionId);
-    // const { dataValues } = await getUserById(question.userId);
-    // question.dataValues.user = dataValues;
     return res.status(201).json(Success(question));
   } catch (err) {
     next(err);
