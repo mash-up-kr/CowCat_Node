@@ -44,6 +44,7 @@ export const getQuestions = async (
     maxKilometerInteger,
     category,
     emotion,
+    limit,
 ) => {
   const userLatitude = user.userLocation.latitude;
   const userLongitude = user.userLocation.longitude;
@@ -86,17 +87,6 @@ export const getQuestions = async (
         ],
       ],
     },
-    order: [
-      [
-        sequelize.fn(
-            'ST_Distance',
-            sequelize.col('location'),
-            sequelize.fn('POINT', userLatitude, userLongitude),
-        ),
-        'ASC',
-      ],
-    ],
-    group: ['id'],
     where: {
       [Op.and]: conditions,
     },
@@ -108,6 +98,10 @@ export const getQuestions = async (
         attributes: [],
       },
     ],
+    group: ['id'],
+    order: [[sequelize.fn('RAND')]],
+    limit,
+    subQuery: false,
   });
 
   questions.forEach((question) => {
