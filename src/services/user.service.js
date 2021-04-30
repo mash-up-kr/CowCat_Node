@@ -1,3 +1,4 @@
+import axios from 'axios';
 import sequelize from 'sequelize';
 const {Op} = sequelize;
 
@@ -197,6 +198,22 @@ export const createUserBySnsAuth = async (snsId, snsType) => {
   return createUser;
 };
 
+export const getAddressFromLocation = async (userLocation) => {
+  const {longitude, latitude} = userLocation;
+
+  const {data} = await axios.get(
+      `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?input_coord=WGS84&output_coord=WGS84&x=${longitude}&y=${latitude}`,
+      {
+        headers: {
+          'Authorization': `KakaoAK ${process.env.KAKAO_MAP_REST_API}`,
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      },
+  );
+  const addressName = data.documents[1].address_name;
+  return addressName;
+};
+
 export default {
   signUp,
   editProfile,
@@ -204,4 +221,5 @@ export default {
   getUserBySnsAuth,
   getUserById,
   createUserBySnsAuth,
+  getAddressFromLocation,
 };
