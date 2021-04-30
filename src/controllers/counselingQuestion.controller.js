@@ -2,6 +2,7 @@
 import questionService from '../services/counselingQuestion.service.js';
 import {Success, Failure} from '../utils/response.js';
 import enums from '../models/data/enums.js';
+import e from 'cors';
 
 export const postQuestion = async (req, res, next) => {
   const userId = req.user.id;
