@@ -60,10 +60,6 @@ export const getQuestions = async (req, res, next) => {
   if (!req.user.userLocation) {
     return res.status(200).json(Failure('User의 위치값이 없습니다.'));
   }
-  if (limit == null) {
-    return res.status(200).json(Failure('질문의 개수를 입력해주세요.'));
-  }
-
   try {
     const questions = await questionService.getQuestions(
         req.user,
@@ -71,7 +67,7 @@ export const getQuestions = async (req, res, next) => {
         maxKilometer,
         category,
         emotion,
-        Number(limit),
+      isNaN(limit) ? undefined : Number(limit),
     );
     return res.status(201).json(Success(questions));
   } catch (err) {
