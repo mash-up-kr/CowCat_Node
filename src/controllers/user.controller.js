@@ -99,7 +99,7 @@ export const getAddressFromLocation = async (req, res, next) => {
   const userLocation = req.user.userLocation;
 
   if (userLocation == null) {
-    return res.status(200).json(Failure('현재 위치를 설정해 주세요.'));
+    return res.status(400).json(Failure('현재 위치를 설정해 주세요.'));
   }
 
   try {
@@ -108,7 +108,7 @@ export const getAddressFromLocation = async (req, res, next) => {
     );
     return res.status(200).json(Success(addressString));
   } catch (err) {
-    return res.status(200).json(Failure('위치 조회에 실패했습니다.'));
+    return res.status(400).json(Failure('위치 조회에 실패했습니다.'));
   }
 };
 
