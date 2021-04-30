@@ -95,9 +95,27 @@ export const postCheckNickname = async (req, res, next) => {
   }
 };
 
+export const getAddressFromLocation = async (req, res, next) => {
+  const userLocation = req.user.userLocation;
+
+  if (userLocation == null) {
+    return res.status(400).json(Failure('현재 위치를 설정해 주세요.'));
+  }
+
+  try {
+    const addressString = await userService.getAddressFromLocation(
+        userLocation,
+    );
+    return res.status(200).json(Success(addressString));
+  } catch (err) {
+    return res.status(400).json(Failure('위치 조회에 실패했습니다.'));
+  }
+};
+
 export default {
   postSignUp,
   getMyProfile,
   patchMyProfile,
   postCheckNickname,
+  getAddressFromLocation,
 };

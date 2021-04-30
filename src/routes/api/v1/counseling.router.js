@@ -27,14 +27,4 @@ router
     .put(commentController.putComment)
     .delete(commentController.deleteComment);
 
-// router.get(
-//     '/categories',
-//     questionController.getCategories,
-// );
-
-// router.get(
-//     '/emotions',
-//     questionController.getEmotions,
-// );
-
 export default router;

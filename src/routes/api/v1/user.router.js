@@ -30,4 +30,10 @@ router.use(
     userController.postCheckNickname,
 );
 
+router.use(
+    '/address',
+    checkJWTAccessToken,
+    userController.getAddressFromLocation,
+);
+
 export default router;
