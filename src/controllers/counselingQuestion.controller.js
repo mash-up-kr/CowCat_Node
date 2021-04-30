@@ -45,7 +45,7 @@ export const postQuestion = async (req, res, next) => {
 };
 
 export const getQuestions = async (req, res, next) => {
-  const {minKilometer, maxKilometer, category, emotion} = req.query;
+  const {minKilometer, maxKilometer, category, emotion, limit} = req.query;
 
   if (category != null && !enums.category.includes(category)) {
     return res
@@ -60,6 +60,9 @@ export const getQuestions = async (req, res, next) => {
   if (!req.user.userLocation) {
     return res.status(200).json(Failure('User의 위치값이 없습니다.'));
   }
+  if (limit == null) {
+    return res.status(200).json(Failure('질문의 개수를 입력해주세요.'));
+  }
 
   try {
     const questions = await questionService.getQuestions(
@@ -68,6 +71,7 @@ export const getQuestions = async (req, res, next) => {
         maxKilometer,
         category,
         emotion,
+        Number(limit),
     );
     return res.status(201).json(Success(questions));
   } catch (err) {
