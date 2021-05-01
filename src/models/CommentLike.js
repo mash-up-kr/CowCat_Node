@@ -3,27 +3,22 @@ import db from './sequelize.js';
 const {sequelize, Sequelize} = db;
 const {Model, DataTypes} = Sequelize;
 
-class CounselingComment extends Model {
+class CommentLike extends Model {
   static associate(models) {
     this.belongsTo(models.User, {
-      foreignKey: 'userId',
+      foreignKey: {name: 'userId', allowNull: false},
       targetKey: 'id',
       as: 'user',
     });
-    this.belongsTo(models.CounselingQuestion, {
-      foreignKey: 'counselingQuestionId',
-      targetKey: 'id',
-      as: 'counselingQuestion',
-    });
-    this.hasMany(models.CommentLike, {
+    this.belongsTo(models.CounselingComment, {
       foreignKey: {name: 'counselingCommentId', allowNull: false},
-      sourceKey: 'id',
-      as: 'commentLike',
+      targetKey: 'id',
+      as: 'counselingComment',
     });
   }
 }
 
-CounselingComment.init(
+CommentLike.init(
     {
       id: {
         type: DataTypes.BIGINT,
@@ -31,20 +26,25 @@ CounselingComment.init(
         allowNull: false,
         autoIncrement: true,
       },
-      content: {
-        type: DataTypes.STRING(200),
-        allowNull: false,
-      },
     },
     {
       sequelize,
-      tableName: 'counseling_comments',
+      tableName: 'comment_likes',
       charset: 'utf8mb4',
       collate: 'utf8mb4_bin',
       timestamps: true,
-      paranoid: true,
+      paranoid: false,
       underscored: true,
+      indexes: [
+        {
+          unique: true,
+          fields: ['user_id', 'counseling_comment_id'],
+        },
+        {
+          fields: ['user_id'],
+        },
+      ],
     },
 );
 
-export default CounselingComment;
+export default CommentLike;

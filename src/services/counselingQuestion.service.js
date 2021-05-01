@@ -1,12 +1,11 @@
 import sequelize from 'sequelize';
-import CounselingComment from '../models/CounselingComment.js';
 import enums from '../models/data/enums.js';
+import models from '../models/index.js';
+
+const {CounselingQuestion, CounselingComment, User, QuestionLike} = models;
 const {Op} = sequelize;
 
-import models from '../models/index.js';
-import User from '../models/User.js';
-
-const {CounselingQuestion} = models;
+const ONE_DAY_SEC = 24 * 60 * 60 * 1000;
 
 export const postQuestion = async (
     title,
@@ -98,11 +97,14 @@ export const getQuestions = async (
         attributes: [],
       },
     ],
-    group: ['id'],
+    group: ['counselingQuestion.id'],
     order: [[sequelize.fn('RAND')]],
     limit,
     subQuery: false,
   });
+
+  await setQuestionLikeInfo(questions, user.id);
+  await setIsNew(questions);
 
   questions.forEach((question) => {
     if (question.id != null) {
@@ -121,7 +123,7 @@ export const getQuestions = async (
   return questions;
 };
 
-export const getQuestion = async (questionId) => {
+export const getQuestion = async (questionId, userId) => {
   const question = await CounselingQuestion.findOne({
     attributes: [
       'id',
@@ -157,6 +159,10 @@ export const getQuestion = async (questionId) => {
     };
     question.location = coordinates;
   }
+
+  await setQuestionLikeInfo([question], userId);
+  await setIsNew([question]);
+
   return question;
 };
 
@@ -214,8 +220,13 @@ export const getMyQuestions = async (userId) => {
     order: ['id'],
     group: ['id'],
   });
+
+  await setQuestionLikeInfo(questions, userId);
+  await setIsNew(questions);
+
   const result = {};
   enums.category.forEach((key) => (result[key] = []));
+
   questions.forEach((question) => {
     if (question.id != null) {
       const coordinates = {
@@ -226,7 +237,72 @@ export const getMyQuestions = async (userId) => {
       result[question.dataValues.category].push(question);
     }
   });
+
   return result;
+};
+
+export const postQuestionLike = async (userId, counselingQuestionId) => {
+  const question = await QuestionLike.create({
+    userId,
+    counselingQuestionId,
+  });
+  return question;
+};
+
+export const deleteQuestionLike = async (userId, counselingQuestionId) => {
+  const question = await QuestionLike.destroy({
+    where: {userId, counselingQuestionId},
+  });
+  return question;
+};
+
+export const setQuestionLikeInfo = async (questions, userId) => {
+  const questionIdx = new Map();
+
+  for (let i = 0; i < questions.length; i++) {
+    questions[i].dataValues.likeCount = 0;
+    questions[i].dataValues.liked = false;
+    questionIdx.set(questions[i].id, i);
+  }
+
+  const likeCounts = await QuestionLike.findAll({
+    where: {counselingQuestionId: [...questionIdx.keys()]},
+    attributes: [
+      ['counseling_question_id', 'questionId'],
+      [sequelize.fn('COUNT', sequelize.col('id')), 'likeCount'],
+    ],
+    group: ['counseling_question_id'],
+  });
+
+  const questionsLikedByUser = await QuestionLike.findAll({
+    where: {counselingQuestionId: [...questionIdx.keys()], userId},
+  });
+
+  likeCounts.forEach((v) => {
+    const idx = questionIdx.get(v.dataValues.questionId);
+    const likeCnt = v.dataValues.likeCount;
+    questions[idx].dataValues.likeCount = likeCnt;
+  });
+
+  questionsLikedByUser.forEach((v) => {
+    const idx = questionIdx.get(v.dataValues.counselingQuestionId);
+    questions[idx].dataValues.liked = true;
+  });
+};
+
+export const setIsNew = async (questions) => {
+  const now = new Date();
+  questions.forEach((question) => {
+    console.log(question);
+
+    const targetTime = new Date(question.dataValues.createdAt);
+    // 24시간 기준으로 판별
+    if (now - targetTime <= ONE_DAY_SEC) {
+      question.dataValues.isNew = true;
+    } else {
+      question.dataValues.isNew = false;
+    }
+  });
 };
 
 export default {
@@ -236,4 +312,6 @@ export default {
   putQuestion,
   deleteQuestion,
   getMyQuestions,
+  postQuestionLike,
+  deleteQuestionLike,
 };

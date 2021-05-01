@@ -22,6 +22,18 @@ class User extends Model {
       sourceKey: 'id',
       as: 'counselingComment',
     });
+
+    this.hasMany(models.CommentLike, {
+      foreignKey: {name: 'userId', allowNull: false},
+      sourceKey: 'id',
+      as: 'commentLike',
+    });
+
+    this.hasMany(models.QuestionLike, {
+      foreignKey: {name: 'userId', allowNull: false},
+      sourceKey: 'id',
+      as: 'questionLike',
+    });
   }
 }
 

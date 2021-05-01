@@ -27,12 +27,14 @@ export const postComment = async (req, res, next) => {
 
 export const getComments = async (req, res, next) => {
   const {questionId} = req.params;
+  const userId = req.user.id;
 
   try {
-    const result = await commentService.getComments({
+    const comments = await commentService.getComments({
       questionId: parseInt(questionId),
+      userId,
     });
-    return res.status(201).json(Success(result));
+    return res.status(200).json(Success(comments));
   } catch (err) {
     next(err);
   }
@@ -42,7 +44,7 @@ export const putComment = async (req, res, next) => {
   const {commentId} = req.params;
   const {content} = req.body;
   const userId = req.user.id;
-  const comment = await commentService.getComment({commentId});
+  const comment = await commentService.getComment({commentId, userId});
 
   if (comment === null) {
     return res.status(200).json(Failure('코멘트가 존재하지 않습니다.'));
@@ -69,7 +71,7 @@ export const putComment = async (req, res, next) => {
     }
 
     const comment = await commentService.getComment({commentId});
-    return res.status(201).json(Success(comment));
+    return res.status(200).json(Success(comment));
   } catch (err) {
     next(err);
   }
@@ -96,7 +98,7 @@ export const deleteComment = async (req, res, next) => {
     if (resultCode === 0) {
       return res.status(200).json(Failure('존재하지 않는 코멘트입니다.'));
     }
-    return res.status(201).json(
+    return res.status(200).json(
         Success({
           id: parseInt(commentId),
           counselingQuestionId: parseInt(questionId),
@@ -111,7 +113,29 @@ export const getCommentsByUserId = async (req, res, next) => {
   const userId = req.user.id;
   try {
     const comments = await commentService.getCommentsByUserId(userId);
-    return res.status(201).json(Success(comments));
+    return res.status(200).json(Success(comments));
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const postCommnerLike = async (req, res, next) => {
+  const {commentId} = req.params;
+  const userId = req.user.id;
+  try {
+    const comment = await commentService.postCommnerLike(userId, commentId);
+    return res.status(200).json(Success(comment));
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteCommnerLike = async (req, res, next) => {
+  const {commentId} = req.params;
+  const userId = req.user.id;
+  try {
+    await commentService.deleteCommnerLike(userId, commentId);
+    return res.status(201).json(Success());
   } catch (err) {
     next(err);
   }
@@ -123,4 +147,6 @@ export default {
   putComment,
   deleteComment,
   getCommentsByUserId,
+  postCommnerLike,
+  deleteCommnerLike,
 };
