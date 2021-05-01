@@ -27,12 +27,14 @@ export const postComment = async (req, res, next) => {
 
 export const getComments = async (req, res, next) => {
   const {questionId} = req.params;
+  const userId = req.user.id;
 
   try {
-    const result = await commentService.getComments({
+    const comments = await commentService.getComments({
       questionId: parseInt(questionId),
+      userId,
     });
-    return res.status(200).json(Success(result));
+    return res.status(200).json(Success(comments));
   } catch (err) {
     next(err);
   }
@@ -42,7 +44,7 @@ export const putComment = async (req, res, next) => {
   const {commentId} = req.params;
   const {content} = req.body;
   const userId = req.user.id;
-  const comment = await commentService.getComment({commentId});
+  const comment = await commentService.getComment({commentId, userId});
 
   if (comment === null) {
     return res.status(200).json(Failure('코멘트가 존재하지 않습니다.'));

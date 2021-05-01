@@ -1,11 +1,10 @@
 import sequelize from 'sequelize';
 import enums from '../models/data/enums.js';
+import models from '../models/index.js';
+
+const {CounselingQuestion, CounselingComment, User, QuestionLike} = models;
 const {Op} = sequelize;
 
-import models from '../models/index.js';
-import User from '../models/User.js';
-
-const {CounselingQuestion, CounselingComment, QuestionLike} = models;
 const ONE_DAY_SEC = 24 * 60 * 60 * 1000;
 
 export const postQuestion = async (
