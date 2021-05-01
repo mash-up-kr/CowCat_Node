@@ -3,7 +3,7 @@ import db from './sequelize.js';
 const {sequelize, Sequelize} = db;
 const {Model, DataTypes} = Sequelize;
 
-class CounselingComment extends Model {
+class QuestionLike extends Model {
   static associate(models) {
     this.belongsTo(models.User, {
       foreignKey: 'userId',
@@ -15,15 +15,10 @@ class CounselingComment extends Model {
       targetKey: 'id',
       as: 'counselingQuestion',
     });
-    this.hasMany(models.CommentLike, {
-      foreignKey: 'counselingCommentId',
-      sourceKey: 'id',
-      as: 'commentLike',
-    });
   }
 }
 
-CounselingComment.init(
+QuestionLike.init(
     {
       id: {
         type: DataTypes.BIGINT,
@@ -31,14 +26,10 @@ CounselingComment.init(
         allowNull: false,
         autoIncrement: true,
       },
-      content: {
-        type: DataTypes.STRING(200),
-        allowNull: false,
-      },
     },
     {
       sequelize,
-      tableName: 'counseling_comments',
+      tableName: 'question_likes',
       charset: 'utf8mb4',
       collate: 'utf8mb4_bin',
       timestamps: true,
@@ -47,4 +38,4 @@ CounselingComment.init(
     },
 );
 
-export default CounselingComment;
+export default QuestionLike;
