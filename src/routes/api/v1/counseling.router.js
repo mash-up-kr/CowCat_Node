@@ -22,9 +22,15 @@ router
     .route('/:questionId(\\d+)/comments')
     .get(commentController.getComments)
     .post(commentController.postComment);
+
 router
     .route('/:questionId(\\d+)/comments/:commentId(\\d+)')
     .put(commentController.putComment)
     .delete(commentController.deleteComment);
+
+router
+    .route('/:questionId(\\d+)/like')
+    .post(questionController.postQuestionLike)
+    .delete(questionController.deleteQuestionLike);
 
 export default router;

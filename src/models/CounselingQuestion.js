@@ -16,6 +16,11 @@ class CounselingQuestion extends Model {
       sourceKey: 'id',
       as: 'counselingComment',
     });
+    this.hasMany(models.QuestionLike, {
+      foreignKey: {name: 'counselingQuestionId', allowNull: false},
+      sourceKey: 'id',
+      as: 'questionLike',
+    });
   }
 }
 
