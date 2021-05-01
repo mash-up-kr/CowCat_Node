@@ -34,7 +34,7 @@ export const postSignUp = async (req, res, next) => {
     );
     jsonResult.data.dataValues.token = tokens;
 
-    res.status(200).json(jsonResult);
+    res.status(200).json(Success(jsonResult));
   } catch (error) {
     res.status(200).json(Failure(error));
   }
@@ -44,7 +44,7 @@ export const getMyProfile = async (req, res, next) => {
   try {
     const getUser = await userService.getUserById(req.user.id);
 
-    res.status(200).json(getUser);
+    res.status(200).json(Success(getUser));
   } catch (error) {
     res.status(200).json(Failure(error));
   }
@@ -73,7 +73,7 @@ export const patchMyProfile = async (req, res, next) => {
     const jsonResult = Success(updateUser);
     jsonResult.data.dataValues.birthday = `${birthdayYear}-01-01`;
 
-    res.status(200).json(jsonResult);
+    res.status(200).json(Success(jsonResult));
   } catch (error) {
     res.status(200).json(Failure(error));
   }
