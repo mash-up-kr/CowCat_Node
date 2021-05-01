@@ -100,6 +100,7 @@ export const getQuestions = async (
     group: ['id'],
     order: [[sequelize.fn('RAND')]],
     limit,
+    subQuery: false,
   });
 
   await setQuestionLikeInfo(questions, user.id);
