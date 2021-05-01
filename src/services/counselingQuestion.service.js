@@ -169,6 +169,10 @@ export const getQuestion = async (questionId, user) => {
       longitude: question.location.coordinates[1],
     };
     question.location = coordinates;
+
+    question.dataValues.distance /= 0.012;
+    question.dataValues.distance =
+      Math.round(question.dataValues.distance * 1000.0) / 1000.0;
   }
 
   await setQuestionLikeInfo([question], userId);
