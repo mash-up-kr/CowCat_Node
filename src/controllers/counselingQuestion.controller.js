@@ -157,6 +157,31 @@ export const getMyQuestions = async (req, res, next) => {
   }
 };
 
+export const postQuestionLike = async (req, res, next) => {
+  const {questionId} = req.params;
+  const userId = req.user.id;
+  try {
+    const questions = await questionService.postQuestionLike(
+        userId,
+        questionId,
+    );
+    return res.status(200).json(Success(questions));
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteQuestionLike = async (req, res, next) => {
+  const {questionId} = req.params;
+  const userId = req.user.id;
+  try {
+    await questionService.deleteQuestionLike(userId, questionId);
+    return res.status(201).json(Success());
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   postQuestion,
   getQuestion,
@@ -164,4 +189,6 @@ export default {
   putQuestion,
   deleteQuestion,
   getMyQuestions,
+  postQuestionLike,
+  deleteQuestionLike,
 };
