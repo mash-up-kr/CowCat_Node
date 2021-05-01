@@ -16,7 +16,7 @@ class CounselingComment extends Model {
       as: 'counselingQuestion',
     });
     this.hasMany(models.CommentLike, {
-      foreignKey: 'counselingCommentId',
+      foreignKey: {name: 'counselingCommentId', allowNull: false},
       sourceKey: 'id',
       as: 'commentLike',
     });

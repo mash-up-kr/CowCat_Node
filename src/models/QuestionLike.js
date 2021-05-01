@@ -6,12 +6,12 @@ const {Model, DataTypes} = Sequelize;
 class QuestionLike extends Model {
   static associate(models) {
     this.belongsTo(models.User, {
-      foreignKey: 'userId',
+      foreignKey: {name: 'userId', allowNull: false},
       targetKey: 'id',
       as: 'user',
     });
     this.belongsTo(models.CounselingQuestion, {
-      foreignKey: 'counselingQuestionId',
+      foreignKey: {name: 'counselingQuestionId', allowNull: false},
       targetKey: 'id',
       as: 'counselingQuestion',
     });
@@ -35,6 +35,15 @@ QuestionLike.init(
       timestamps: true,
       paranoid: true,
       underscored: true,
+      indexes: [
+        {
+          unique: true,
+          fields: ['user_id', 'counseling_question_id'],
+        },
+        {
+          fields: ['user_id'],
+        },
+      ],
     },
 );
 
