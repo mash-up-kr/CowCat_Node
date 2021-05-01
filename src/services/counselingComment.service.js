@@ -64,13 +64,23 @@ export const getCommentsByUserId = async (userId) => {
     where: {userId},
     attributes: {
       include: [[sequelize.col('counselingQuestion.category'), 'category']],
+      exclude: [
+        'counselingQuestionId',
+        'userId',
+        'updatedAt',
+        'deletedAt',
+      ],
     },
     include: [
       {
         model: CounselingQuestion,
         as: 'counselingQuestion',
         required: true,
-        attributes: [],
+        attributes: [
+          'id',
+          'title',
+          'createdAt',
+        ],
       },
     ],
     order: ['id'],
