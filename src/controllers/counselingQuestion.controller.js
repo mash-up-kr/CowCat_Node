@@ -69,7 +69,7 @@ export const getQuestions = async (req, res, next) => {
         emotion,
       isNaN(limit) ? undefined : Number(limit),
     );
-    return res.status(201).json(Success(questions));
+    return res.status(200).json(Success(questions));
   } catch (err) {
     next(err);
   }
@@ -80,7 +80,7 @@ export const getQuestion = async (req, res, next) => {
 
   try {
     const question = await questionService.getQuestion(questionId);
-    return res.status(201).json(Success(question));
+    return res.status(200).json(Success(question));
   } catch (err) {
     next(err);
   }
@@ -125,7 +125,7 @@ export const putQuestion = async (req, res, next) => {
     }
 
     const getQuestion = await questionService.getQuestion(questionId);
-    return res.status(201).json(Success(getQuestion));
+    return res.status(200).json(Success(getQuestion));
   } catch (err) {
     next(err);
   }
@@ -141,7 +141,7 @@ export const deleteQuestion = async (req, res, next) => {
     if (resultCode === 0) {
       return res.status(200).json(Failure('존재하지 않는 고민입니다.'));
     }
-    return res.status(201).json(Success({id: questionId}));
+    return res.status(200).json(Success({id: questionId}));
   } catch (err) {
     next(err);
   }
@@ -151,7 +151,7 @@ export const getMyQuestions = async (req, res, next) => {
   const userId = req.user.id;
   try {
     const questions = await questionService.getMyQuestions(userId);
-    return res.status(201).json(Success(questions));
+    return res.status(200).json(Success(questions));
   } catch (err) {
     next(err);
   }

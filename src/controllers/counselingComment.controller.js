@@ -32,7 +32,7 @@ export const getComments = async (req, res, next) => {
     const result = await commentService.getComments({
       questionId: parseInt(questionId),
     });
-    return res.status(201).json(Success(result));
+    return res.status(200).json(Success(result));
   } catch (err) {
     next(err);
   }
@@ -69,7 +69,7 @@ export const putComment = async (req, res, next) => {
     }
 
     const comment = await commentService.getComment({commentId});
-    return res.status(201).json(Success(comment));
+    return res.status(200).json(Success(comment));
   } catch (err) {
     next(err);
   }
@@ -96,7 +96,7 @@ export const deleteComment = async (req, res, next) => {
     if (resultCode === 0) {
       return res.status(200).json(Failure('존재하지 않는 코멘트입니다.'));
     }
-    return res.status(201).json(
+    return res.status(200).json(
         Success({
           id: parseInt(commentId),
           counselingQuestionId: parseInt(questionId),
@@ -111,7 +111,7 @@ export const getCommentsByUserId = async (req, res, next) => {
   const userId = req.user.id;
   try {
     const comments = await commentService.getCommentsByUserId(userId);
-    return res.status(201).json(Success(comments));
+    return res.status(200).json(Success(comments));
   } catch (err) {
     next(err);
   }
