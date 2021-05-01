@@ -162,11 +162,8 @@ export const postQuestionLike = async (req, res, next) => {
   const {questionId} = req.params;
   const userId = req.user.id;
   try {
-    const questions = await questionService.postQuestionLike(
-        userId,
-        questionId,
-    );
-    return res.status(200).json(Success(questions));
+    const question = await questionService.postQuestionLike(userId, questionId);
+    return res.status(200).json(Success(question));
   } catch (err) {
     next(err);
   }

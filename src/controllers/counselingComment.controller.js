@@ -117,10 +117,34 @@ export const getCommentsByUserId = async (req, res, next) => {
   }
 };
 
+export const postCommnerLike = async (req, res, next) => {
+  const {commentId} = req.params;
+  const userId = req.user.id;
+  try {
+    const comment = await commentService.postCommnerLike(userId, commentId);
+    return res.status(200).json(Success(comment));
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteCommnerLike = async (req, res, next) => {
+  const {commentId} = req.params;
+  const userId = req.user.id;
+  try {
+    await commentService.deleteCommnerLike(userId, commentId);
+    return res.status(201).json(Success());
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   postComment,
   getComments,
   putComment,
   deleteComment,
   getCommentsByUserId,
+  postCommnerLike,
+  deleteCommnerLike,
 };

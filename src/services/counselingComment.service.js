@@ -1,10 +1,8 @@
 import sequelize from 'sequelize';
-import CounselingQuestion from '../models/CounselingQuestion.js';
 import models from '../models/index.js';
-import User from '../models/User.js';
 import enums from '../models/data/enums.js';
 
-const {CounselingComment} = models;
+const {CounselingComment, CounselingQuestion, User, CommentLike} = models;
 
 export const postComment = async ({questionId, content, userId}) => {
   const result = await CounselingComment.create({
@@ -79,6 +77,20 @@ export const getCommentsByUserId = async (userId) => {
   return result;
 };
 
+export const postCommnerLike = async (userId, counselingCommentId) => {
+  const comment = await CommentLike.create({
+    userId,
+    counselingCommentId,
+  });
+  return comment;
+};
+
+export const deleteCommnerLike = async (userId, counselingCommentId) => {
+  await CommentLike.destroy({
+    where: {userId, counselingCommentId},
+  });
+};
+
 export default {
   postComment,
   getComments,
@@ -86,4 +98,6 @@ export default {
   putComment,
   deleteComment,
   getCommentsByUserId,
+  postCommnerLike,
+  deleteCommnerLike,
 };
