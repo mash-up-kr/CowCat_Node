@@ -77,10 +77,9 @@ export const getQuestions = async (req, res, next) => {
 
 export const getQuestion = async (req, res, next) => {
   const {questionId} = req.params;
-  const userId = req.user.id;
 
   try {
-    const question = await questionService.getQuestion(questionId, userId);
+    const question = await questionService.getQuestion(questionId, req.user);
     return res.status(200).json(Success(question));
   } catch (err) {
     next(err);

@@ -122,7 +122,11 @@ export const getQuestions = async (
   return questions;
 };
 
-export const getQuestion = async (questionId, userId) => {
+export const getQuestion = async (questionId, user) => {
+  const userId = user.id;
+  const userLatitude = user.userLocation.latitude;
+  const userLongitude = user.userLocation.longitude;
+
   const question = await CounselingQuestion.findOne({
     attributes: [
       'id',
@@ -131,6 +135,14 @@ export const getQuestion = async (questionId, userId) => {
       'category',
       'emotion',
       'location',
+      [
+        sequelize.fn(
+            'ST_Distance',
+            sequelize.col('location'),
+            sequelize.fn('POINT', userLatitude, userLongitude),
+        ),
+        'distance',
+      ],
       [
         sequelize.fn('COUNT', sequelize.col('counselingComment.id')),
         'commentCount',
