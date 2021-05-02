@@ -6,10 +6,13 @@
   "main": "src/index.js",
   "scripts": {
     "lint": "eslint src",
+    "fix": "eslint ./src --fix",
     "start": "cross-env NODE_ENV=development nodemon src/index.js",
     "start_test": "cross-env NODE_ENV=test nodemon src/index.js",
-    "deploy": "cross-env NODE_ENV=production nodemon src/index.js",
-    "fix": "npx eslint ./src --fix"
+    "deploy": "cross-env NODE_ENV=production pm2 start src/index.js",
+    "stop": "pm2 stop all",
+    "log": "pm2 log",
+    "monit": "pm2 monit"
   },
   "repository": {
     "type": "git",
@@ -41,7 +44,7 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "mysql2": "^2.2.5",
-    "pm2": "^4.5.5",
+    "pm2": "^4.5.6",
     "sequelize": "^6.5.0",
     "sequelize-cli": "^6.2.0"
   },

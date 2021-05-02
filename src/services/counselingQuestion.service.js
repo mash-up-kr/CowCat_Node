@@ -378,8 +378,6 @@ export const setQuestionLikeInfo = async (questions, userId) => {
 export const setIsNew = async (questions) => {
   const now = new Date();
   questions.forEach((question) => {
-    console.log(question);
-
     const targetTime = new Date(question.dataValues.createdAt);
     // 24시간 기준으로 판별
     if (now - targetTime <= ONE_DAY_SEC) {
