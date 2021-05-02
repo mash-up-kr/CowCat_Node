@@ -2,8 +2,8 @@ import sequelize from 'sequelize';
 import enums from '../models/data/enums.js';
 import models from '../models/index.js';
 
-const { CounselingQuestion, CounselingComment, User, QuestionLike } = models;
-const { Op } = sequelize;
+const {CounselingQuestion, CounselingComment, User, QuestionLike} = models;
+const {Op} = sequelize;
 
 const ONE_DAY_SEC = 24 * 60 * 60 * 1000;
 
@@ -42,19 +42,19 @@ const validateEmotion = (emotion) => {
 const validateLocation = (latitude, longitude) => {
   if (!latitude || !longitude) {
     throw new Error(
-      `위치 정보 값을 확인해주세요. : (latitude: ${latitude}, longitude: ${longitude})`
+        `위치 정보 값을 확인해주세요. : (latitude: ${latitude}, longitude: ${longitude})`,
     );
   }
 };
 
 export const postQuestion = async (
-  title,
-  content,
-  category,
-  emotion,
-  userId,
-  latitude,
-  longitude
+    title,
+    content,
+    category,
+    emotion,
+    userId,
+    latitude,
+    longitude,
 ) => {
   validateTitle(title);
   validateContent(content);
@@ -84,12 +84,12 @@ export const postQuestion = async (
 };
 
 export const getQuestions = async (
-  user,
-  minKilometerInteger,
-  maxKilometerInteger,
-  category,
-  emotion,
-  limit
+    user,
+    minKilometerInteger,
+    maxKilometerInteger,
+    category,
+    emotion,
+    limit,
 ) => {
   if (category) {
     validateCategory(category);
@@ -108,29 +108,29 @@ export const getQuestions = async (
 
   const conditions = [
     sequelize.where(
-      sequelize.fn(
-        'ST_Distance',
-        sequelize.col('location'),
-        sequelize.fn('POINT', userLatitude, userLongitude)
-      ),
-      {
-        [Op.gte]: minKilometerInteger,
-        [Op.lte]: maxKilometerInteger,
-      }
+        sequelize.fn(
+            'ST_Distance',
+            sequelize.col('location'),
+            sequelize.fn('POINT', userLatitude, userLongitude),
+        ),
+        {
+          [Op.gte]: minKilometerInteger,
+          [Op.lte]: maxKilometerInteger,
+        },
     ),
   ];
 
-  if (emotion) conditions.push({ emotion });
-  if (category) conditions.push({ category });
+  if (emotion) conditions.push({emotion});
+  if (category) conditions.push({category});
 
   const questions = await CounselingQuestion.findAll({
     attributes: {
       include: [
         [
           sequelize.fn(
-            'ST_Distance',
-            sequelize.col('location'),
-            sequelize.fn('POINT', userLatitude, userLongitude)
+              'ST_Distance',
+              sequelize.col('location'),
+              sequelize.fn('POINT', userLatitude, userLongitude),
           ),
           'distance',
         ],
@@ -192,9 +192,9 @@ export const getQuestion = async (questionId, user) => {
       'location',
       [
         sequelize.fn(
-          'ST_Distance',
-          sequelize.col('location'),
-          sequelize.fn('POINT', userLatitude, userLongitude)
+            'ST_Distance',
+            sequelize.col('location'),
+            sequelize.fn('POINT', userLatitude, userLongitude),
         ),
         'distance',
       ],
@@ -203,7 +203,7 @@ export const getQuestion = async (questionId, user) => {
         'commentCount',
       ],
     ],
-    where: { id: questionId },
+    where: {id: questionId},
     include: [
       {
         model: User,
@@ -237,12 +237,12 @@ export const getQuestion = async (questionId, user) => {
 };
 
 export const putQuestion = async (
-  user,
-  questionId,
-  title,
-  content,
-  category,
-  emotion
+    user,
+    questionId,
+    title,
+    content,
+    category,
+    emotion,
 ) => {
   validateTitle(title);
   validateContent(content);
@@ -250,18 +250,18 @@ export const putQuestion = async (
   validateEmotion(emotion);
 
   const updateQuestions = await CounselingQuestion.update(
-    {
-      title,
-      content,
-      category,
-      emotion,
-    },
-    {
-      where: {
-        id: questionId,
-        userId: user.id,
+      {
+        title,
+        content,
+        category,
+        emotion,
       },
-    }
+      {
+        where: {
+          id: questionId,
+          userId: user.id,
+        },
+      },
   );
   return updateQuestions;
 };
@@ -285,7 +285,7 @@ export const deleteQuestion = async (user, questionId) => {
 
 export const getMyQuestions = async (userId) => {
   const questions = await CounselingQuestion.findAll({
-    where: { userId },
+    where: {userId},
     attributes: {
       include: [
         [
@@ -336,7 +336,7 @@ export const postQuestionLike = async (userId, counselingQuestionId) => {
 
 export const deleteQuestionLike = async (userId, counselingQuestionId) => {
   const question = await QuestionLike.destroy({
-    where: { userId, counselingQuestionId },
+    where: {userId, counselingQuestionId},
   });
   return question;
 };
@@ -351,7 +351,7 @@ export const setQuestionLikeInfo = async (questions, userId) => {
   }
 
   const likeCounts = await QuestionLike.findAll({
-    where: { counselingQuestionId: [...questionIdx.keys()] },
+    where: {counselingQuestionId: [...questionIdx.keys()]},
     attributes: [
       ['counseling_question_id', 'questionId'],
       [sequelize.fn('COUNT', sequelize.col('id')), 'likeCount'],
@@ -360,7 +360,7 @@ export const setQuestionLikeInfo = async (questions, userId) => {
   });
 
   const questionsLikedByUser = await QuestionLike.findAll({
-    where: { counselingQuestionId: [...questionIdx.keys()], userId },
+    where: {counselingQuestionId: [...questionIdx.keys()], userId},
   });
 
   likeCounts.forEach((v) => {
