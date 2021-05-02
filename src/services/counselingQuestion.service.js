@@ -91,11 +91,11 @@ export const getQuestions = async (
     emotion,
     limit,
 ) => {
-  if (category !== null) {
+  if (category) {
     validateCategory(category);
   }
 
-  if (emotion !== null) {
+  if (emotion) {
     validateEmotion(emotion);
   }
 

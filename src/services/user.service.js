@@ -84,19 +84,19 @@ export const editProfile = async (
     imageUrl,
     location,
 ) => {
-  if (nickname !== null) {
+  if (nickname) {
     validateNickname(nickname);
 
     user.nickname = nickname;
   }
 
-  if (gender !== null) {
+  if (gender) {
     validateGender(gender);
 
     user.gender = gender;
   }
 
-  if (birthdayYear !== null) {
+  if (birthdayYear) {
     validateBirthdayYear(birthdayYear);
 
     const birthdayYearInt = parseInt(birthdayYear, 10);
@@ -104,7 +104,7 @@ export const editProfile = async (
     user.birthday = birthdayDate;
   }
 
-  if (imageUrl !== null) {
+  if (imageUrl) {
     validateImageUrl(imageUrl);
 
     user.imageUrl = imageUrl;
