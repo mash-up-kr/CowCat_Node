@@ -138,7 +138,7 @@ export const getCommentsByUserId = async (userId) => {
   return result;
 };
 
-export const postCommnerLike = async (userId, counselingCommentId) => {
+export const postCommentLike = async (userId, counselingCommentId) => {
   const comment = await CommentLike.create({
     userId,
     counselingCommentId,
@@ -146,7 +146,7 @@ export const postCommnerLike = async (userId, counselingCommentId) => {
   return comment;
 };
 
-export const deleteCommnerLike = async (userId, counselingCommentId) => {
+export const deleteCommentLike = async (userId, counselingCommentId) => {
   await CommentLike.destroy({
     where: {userId, counselingCommentId},
   });
@@ -205,6 +205,6 @@ export default {
   putComment,
   deleteComment,
   getCommentsByUserId,
-  postCommnerLike,
-  deleteCommnerLike,
+  postCommentLike,
+  deleteCommentLike,
 };
