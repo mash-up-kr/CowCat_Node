@@ -91,8 +91,13 @@ export const getQuestions = async (
     emotion,
     limit,
 ) => {
-  validateCategory(category);
-  validateEmotion(emotion);
+  if (category !== null) {
+    validateCategory(category);
+  }
+
+  if (emotion !== null) {
+    validateEmotion(emotion);
+  }
 
   const userLatitude = user.location.latitude;
   const userLongitude = user.location.longitude;

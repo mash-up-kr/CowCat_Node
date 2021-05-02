@@ -55,7 +55,13 @@ export const getQuestions = async (req, res, next) => {
         ),
     );
   } catch (error) {
-    return res.status(400).json(UnExpectedError(error));
+    if (error.name === 'Error') {
+      return res.status(400).json(
+          Failure(error.message, 'INVALID_PARAMETER', -1),
+      );
+    }
+
+    res.status(400).json(UnExpectedError(error));
   }
 };
 
@@ -117,8 +123,13 @@ export const putQuestion = async (req, res, next) => {
         '성공적으로 고민을 수정했습니다.',
     ));
   } catch (error) {
-    console.log(error);
-    return res.status(400).json(UnExpectedError(error));
+    if (error.name === 'Error') {
+      return res.status(400).json(
+          Failure(error.message, 'INVALID_PARAMETER', -1),
+      );
+    }
+
+    res.status(400).json(UnExpectedError(error));
   }
 };
 
