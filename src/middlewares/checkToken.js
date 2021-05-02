@@ -9,7 +9,9 @@ export const checkSNSAccessToken = async (req, res, next) => {
   let snsId;
 
   if (!accessToken) {
-    res.status(200).json(Failure('해당하는 계정이 없습니다.'));
+    res.status(401).json(
+        Failure('해당하는 계정이 없습니다.', 'NOT_FOUND_ACCOUNT', -1),
+    );
   }
 
   try {
@@ -30,7 +32,9 @@ export const checkSNSAccessToken = async (req, res, next) => {
     req.snsType = snsType;
     next();
   } catch (err) {
-    res.status(401).json(Failure('토큰이 만료되었습니다.', 401));
+    res.status(401).json(
+        Failure('소셜 토큰이 만료되었습니다.', 'SNS_TOKEN_EXPIRED', 401),
+    );
   }
 };
 
@@ -38,7 +42,9 @@ export const checkJWTAccessToken = async (req, res, next) => {
   const token = req.headers.authorization;
 
   if (!token) {
-    return res.status(200).json(Failure('토큰이 일치하지 않습니다.'));
+    return res.status(400).json(
+        Failure('토큰이 일치하지 않습니다.', 'INVALID_TOKEN_FORMAT', -1),
+    );
   }
 
   try {
@@ -46,24 +52,32 @@ export const checkJWTAccessToken = async (req, res, next) => {
     const verifyingJWT = await jwt.verify(parseToken, process.env.SECRET_KEY);
 
     if (typeof verifyingJWT === 'object' && !('user' in verifyingJWT)) {
-      return res.status(200).json(Failure('토큰이 일치하지 않습니다.'));
+      return res.status(400).json(
+          Failure('토큰이 일치하지 않습니다.', 'INVALID_TOKEN_FORMAT', -1),
+      );
     }
 
     if (!verifyingJWT.user.id) {
-      return res.status(200).json(Failure('토큰이 일치하지 않습니다.'));
+      return res.status(400).json(
+          Failure('토큰이 일치하지 않습니다.', 'INVALID_TOKEN_FORMAT', -1),
+      );
     }
 
     const getUser = await userService.getUserById(verifyingJWT.user.id);
 
     if (getUser === null) {
-      return res.status(400).json(Failure('유저를 찾을 수 없습니다.'));
+      return res.status(401).json(
+          Failure('해당하는 계정이 없습니다.', 'NOT_FOUND_ACCOUNT', -1),
+      );
     }
 
     req.user = getUser;
 
     next();
   } catch (error) {
-    return res.status(401).json(Failure('토큰이 만료되었습니다.', 401));
+    return res.status(401).json(
+        Failure('발급한 토큰이 만료되었습니다.', 'JWT_TOKEN_EXPIRED', 401),
+    );
   }
 };
 
@@ -71,7 +85,9 @@ export const checkJWTRefreshToken = async (req, res, next) => {
   const token = req.headers.authorization;
 
   if (!token) {
-    return res.status(200).json(Failure('토큰이 일치하지 않습니다.'));
+    return res.status(400).json(
+        Failure('토큰이 일치하지 않습니다.', 'INVALID_TOKEN_FORMAT', -1),
+    );
   }
 
   let verifyingJWT = null;
@@ -85,14 +101,20 @@ export const checkJWTRefreshToken = async (req, res, next) => {
       !('snsId' in verifyingJWT) &&
       !('snsType' in verifyingJWT)
     ) {
-      return res.status(200).json(Failure('토큰이 일치하지 않습니다.'));
+      return res.status(400).json(
+          Failure('토큰이 일치하지 않습니다.', 'INVALID_TOKEN_FORMAT', -1),
+      );
     }
 
     if (!verifyingJWT.snsId || !verifyingJWT.snsType) {
-      return res.status(200).json(Failure('토큰이 일치하지 않습니다.'));
+      return res.status(400).json(
+          Failure('토큰이 일치하지 않습니다.', 'INVALID_TOKEN_FORMAT', -1),
+      );
     }
   } catch (error) {
-    return res.status(401).json(Failure('토큰이 만료되었습니다.', 401));
+    return res.status(401).json(
+        Failure('발급한 토큰이 만료되었습니다.', 'JWT_TOKEN_EXPIRED', 401),
+    );
   }
 
   try {
@@ -104,7 +126,9 @@ export const checkJWTRefreshToken = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return res.status(400).json(Failure('유저를 찾을 수 없습니다.'));
+    return res.status(401).json(
+        Failure('해당하는 계정이 없습니다.', 'NOT_FOUND_ACCOUNT', -1),
+    );
   }
 };
 

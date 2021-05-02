@@ -6,7 +6,24 @@ const {CounselingComment, CounselingQuestion, User, CommentLike} = models;
 
 const ONE_DAY_SEC = 24 * 60 * 60 * 1000;
 
+const validateContent = (content) => {
+  if (typeof content !== 'string') {
+    throw new Error('문자열을 입력해주세요.');
+  }
+
+  if (content.length > 200) {
+    throw new Error('답변 내용은 최대 200자 입니다.');
+  }
+};
+
+const validateCommentWriter = (comment) => {
+  if (comment.userId !== userId) {
+    throw new Error('답변 작성자가 아닙니다.');
+  }
+};
+
 export const postComment = async ({questionId, content, userId}) => {
+  validateContent(content);
   const result = await CounselingComment.create({
     content,
     counselingQuestionId: questionId,
@@ -40,21 +57,31 @@ export const getComment = async ({commentId}) => {
   return [comment];
 };
 
-export const putComment = async ({commentId, content, userId}) => {
+export const putComment = async ({comment, content, userId}) => {
+  validateContent(content);
+  validateCommentWriter(comment);
+
   const [result] = await CounselingComment.update(
       {
         content,
       },
       {
-        where: {id: commentId, userId},
+        where: {
+          id: comment.id,
+          userId,
+        },
       },
   );
   return result;
 };
 
-export const deleteComment = async ({commentId, userId}) => {
+export const deleteComment = async ({comment, userId}) => {
+  validateCommentWriter(comment);
   const result = await CounselingComment.destroy({
-    where: {id: commentId, userId},
+    where: {
+      id: comment.id,
+      userId,
+    },
   });
   return result;
 };

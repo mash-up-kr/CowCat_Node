@@ -8,7 +8,7 @@ class User extends Model {
     this.hasOne(models.UserLocation, {
       foreignKey: 'userId',
       sourceKey: 'id',
-      as: 'userLocation',
+      as: 'location',
     });
 
     this.hasMany(models.CounselingQuestion, {
@@ -34,6 +34,14 @@ class User extends Model {
       sourceKey: 'id',
       as: 'questionLike',
     });
+  }
+
+  hasLocation() {
+    if (this.location === null) {
+      return false;
+    }
+
+    return true;
   }
 }
 

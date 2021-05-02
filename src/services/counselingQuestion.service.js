@@ -7,6 +7,46 @@ const {Op} = sequelize;
 
 const ONE_DAY_SEC = 24 * 60 * 60 * 1000;
 
+const validateTitle = (title) => {
+  if (typeof title !== 'string') {
+    throw new Error('문자열을 입력해주세요.');
+  }
+
+  if (title.length > 20) {
+    throw new Error('고민 제목은 최대 20자 입니다.');
+  }
+};
+
+const validateContent = (content) => {
+  if (typeof content !== 'string') {
+    throw new Error('문자열을 입력해주세요.');
+  }
+
+  if (content.length > 200) {
+    throw new Error('고민 내용은 최대 200자 입니다.');
+  }
+};
+
+const validateCategory = (category) => {
+  if (!enums.category.includes(category)) {
+    throw new Error(`고민 카테고리 값을 확인해주세요. : ${enums.category}`);
+  }
+};
+
+const validateEmotion = (emotion) => {
+  if (!enums.emotion.includes(emotion)) {
+    throw new Error(`기분 값을 확인해주세요. : ${enums.emotion}`);
+  }
+};
+
+const validateLocation = (latitude, longitude) => {
+  if (!latitude || !longitude) {
+    throw new Error(
+        `위치 정보 값을 확인해주세요. : (latitude: ${latitude}, longitude: ${longitude})`,
+    );
+  }
+};
+
 export const postQuestion = async (
     title,
     content,
@@ -16,6 +56,12 @@ export const postQuestion = async (
     latitude,
     longitude,
 ) => {
+  validateTitle(title);
+  validateContent(content);
+  validateCategory(category);
+  validateEmotion(emotion);
+  validateLocation(latitude, longitude);
+
   const point = {
     type: 'Point',
     coordinates: [latitude, longitude],
@@ -45,8 +91,11 @@ export const getQuestions = async (
     emotion,
     limit,
 ) => {
-  const userLatitude = user.userLocation.latitude;
-  const userLongitude = user.userLocation.longitude;
+  validateCategory(category);
+  validateEmotion(emotion);
+
+  const userLatitude = user.location.latitude;
+  const userLongitude = user.location.longitude;
 
   // 1km : 0.012 이므로 정수형 km 으로 받은 단위를 변환합니다.
   minKilometerInteger *= 0.012;
@@ -125,8 +174,8 @@ export const getQuestions = async (
 
 export const getQuestion = async (questionId, user) => {
   const userId = user.id;
-  const userLatitude = user.userLocation.latitude;
-  const userLongitude = user.userLocation.longitude;
+  const userLatitude = user.location.latitude;
+  const userLongitude = user.location.longitude;
 
   const question = await CounselingQuestion.findOne({
     attributes: [
@@ -190,6 +239,11 @@ export const putQuestion = async (
     category,
     emotion,
 ) => {
+  validateTitle(title);
+  validateContent(content);
+  validateCategory(category);
+  validateEmotion(emotion);
+
   const updateQuestions = await CounselingQuestion.update(
       {
         title,
@@ -209,8 +263,18 @@ export const putQuestion = async (
 
 export const deleteQuestion = async (user, questionId) => {
   const questions = await CounselingQuestion.destroy({
-    where: {id: questionId, userId: user.id},
+    where: {
+      id: questionId,
+      userId: user.id,
+    },
   });
+
+  await CounselingComment.destroy({
+    where: {
+      counselingQuestionId: questionId,
+    },
+  });
+
   return questions;
 };
 
