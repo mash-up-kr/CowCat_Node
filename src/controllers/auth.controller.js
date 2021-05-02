@@ -29,7 +29,13 @@ export const getKakaoCallback = async (req, res, next) => {
 
     const {access_token: accessToken} = result.data;
 
-    res.status(200).json(Success(accessToken));
+    res.status(200).json(
+        Success(
+            `Bearer ${accessToken}`,
+            'SUCCESS_GET_SNS_ACCESS_TOKEN',
+            '성공적으로 소셜 액세스 토큰 발급을 성공했습니다.',
+        ),
+    );
   } catch (err) {
     res.status(200).json(Failure(err));
   }

@@ -12,8 +12,8 @@ const validateTitle = (title) => {
     throw new Error('문자열을 입력해주세요.');
   }
 
-  if (title.length > 20) {
-    throw new Error('고민 제목은 최대 20자 입니다.');
+  if (title.length > 20 || title.length < 1) {
+    throw new Error('고민 제목은 최소 1자 이상 최대 20자 입니다.');
   }
 };
 
@@ -22,8 +22,8 @@ const validateContent = (content) => {
     throw new Error('문자열을 입력해주세요.');
   }
 
-  if (content.length > 200) {
-    throw new Error('고민 내용은 최대 200자 입니다.');
+  if (content.length > 200 || content.length < 1) {
+    throw new Error('고민 내용은 최소 1자 이상 최대 200자 입니다.');
   }
 };
 

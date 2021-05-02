@@ -66,6 +66,7 @@ export const checkJWTAccessToken = async (req, res, next) => {
     const getUser = await userService.getUserById(verifyingJWT.user.id);
 
     if (getUser === null) {
+      console.log(verifyingJWT);
       return res.status(401).json(
           Failure('해당하는 계정이 없습니다.', 'NOT_FOUND_ACCOUNT', -1),
       );
@@ -75,6 +76,7 @@ export const checkJWTAccessToken = async (req, res, next) => {
 
     next();
   } catch (error) {
+    console.log(error);
     return res.status(401).json(
         Failure('발급한 토큰이 만료되었습니다.', 'JWT_TOKEN_EXPIRED', 401),
     );
@@ -112,8 +114,8 @@ export const checkJWTRefreshToken = async (req, res, next) => {
       );
     }
   } catch (error) {
-    return res.status(401).json(
-        Failure('발급한 토큰이 만료되었습니다.', 'JWT_TOKEN_EXPIRED', 401),
+    return res.status(400).json(
+        Failure('토큰이 일치하지 않습니다.', 'INVALID_TOKEN_FORMAT', -1),
     );
   }
 

@@ -1,6 +1,7 @@
 import axios from 'axios';
-import sequelize from 'sequelize';
-const {Op} = sequelize;
+import db from '../models/sequelize.js';
+const {sequelize, Sequelize} = db;
+const {Op} = Sequelize;
 
 import Models from '../models/index.js';
 
@@ -8,7 +9,7 @@ const {User, UserLocation} = Models;
 
 const validateNickname = (nickname) => {
   if (!nickname || nickname.length > 10) {
-    throw new Error(`닉네임은 10글자까지입니다.`);
+    throw new Error(`닉네임은 최소 1글자 이상 10글자까지입니다.`);
   }
 };
 
@@ -42,6 +43,10 @@ const validateLocation = (location) => {
   if (!location) {
     throw new Error(`위치 필드가 존재하지 않습니다.`);
   }
+
+  if (!location.longitude || !location.latitude) {
+    throw new Error(`위치 필드가 존재하지 않습니다.`);
+  }
 };
 
 export const signUp = async (
@@ -56,6 +61,7 @@ export const signUp = async (
   validateGender(gender);
   validateBirthdayYear(birthdayYear);
 
+  const birthdayYearInt = parseInt(birthdayYear, 10);
   const birthdayDate = new Date(birthdayYearInt, 0, 1, 0, 0, 0, 0);
 
   const createUser = await User.create({
@@ -78,26 +84,41 @@ export const editProfile = async (
     imageUrl,
     location,
 ) => {
-  validateNickname(nickname);
-  validateGender(gender);
-  validateBirthdayYear(birthdayYear);
-  validateImageUrl(imageUrl);
-  validateLocation(location);
+  if (nickname !== null) {
+    validateNickname(nickname);
 
-  user.gender = gender;
+    user.nickname = nickname;
+  }
 
-  const birthdayDate = new Date(birthdayYearInt, 0, 1, 0, 0, 0, 0);
-  user.birthday = birthdayDate;
+  if (gender !== null) {
+    validateGender(gender);
 
-  user.imageUrl = imageUrl;
+    user.gender = gender;
+  }
 
-  const {latitude, longitude} = location;
+  if (birthdayYear !== null) {
+    validateBirthdayYear(birthdayYear);
+
+    const birthdayYearInt = parseInt(birthdayYear, 10);
+    const birthdayDate = new Date(birthdayYearInt, 0, 1, 0, 0, 0, 0);
+    user.birthday = birthdayDate;
+  }
+
+  if (imageUrl !== null) {
+    validateImageUrl(imageUrl);
+
+    user.imageUrl = imageUrl;
+  }
 
   const t = await sequelize.transaction();
 
   try {
+    validateLocation(location);
+
+    const {latitude, longitude} = location;
+
     if (user.hasLocation() === false) {
-      user.dataValues.location = await user.createUserLocation({
+      user.dataValues.location = await user.createLocation({
         longitude,
         latitude,
       }, {transaction: t});
@@ -110,10 +131,10 @@ export const editProfile = async (
     const saveUser = await user.save({transaction: t});
 
     await t.commit();
-
     return saveUser;
   } catch (error) {
     await t.rollback();
+    throw error;
   }
 };
 
@@ -160,6 +181,10 @@ export const getUserBySnsAuth = async (snsId, snsType) => {
         model: UserLocation,
         as: 'location',
         required: false,
+        attributes: [
+          'latitude',
+          'longitude',
+        ],
       },
     ],
   });

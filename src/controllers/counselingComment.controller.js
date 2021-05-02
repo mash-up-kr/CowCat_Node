@@ -19,8 +19,8 @@ export const postComment = async (req, res, next) => {
             '성공적으로 답변을 등록했습니다.',
         ),
     );
-  } catch (err) {
-    res.status(400).json(Failure(error, 'INVALID_PARAMETER', -1));
+  } catch (error) {
+    res.status(400).json(Failure(error.message, 'INVALID_PARAMETER', -1));
   }
 };
 
@@ -40,7 +40,7 @@ export const getComments = async (req, res, next) => {
             '성공적으로 답변 목록을 조회했습니다.',
         ),
     );
-  } catch (err) {
+  } catch (error) {
     return res.status(400).json(UnExpectedError(error));
   }
 };
@@ -53,12 +53,7 @@ export const putComment = async (req, res, next) => {
   try {
     let comment = await commentService.getComment({commentId, userId});
 
-    const resultCode = await commentService.putComment({
-      comment,
-      content,
-      userId,
-    });
-    if (resultCode === 0) {
+    if (comment === null) {
       return res.status(400).json(Failure(
           '존재하지 않는 답변입니다.',
           'NOT_FOUND_COMMENT',
@@ -66,23 +61,30 @@ export const putComment = async (req, res, next) => {
       ));
     }
 
-    comment = await commentService.getComment({commentId});
-    return res.status(204).json(
+    await commentService.putComment({
+      comment,
+      content,
+      userId,
+    });
+
+    comment = await commentService.getComment({commentId, userId});
+    return res.status(200).json(
         Success(
             comment,
             'SUCCESS_EDIT_COMMENT',
             '성공적으로 답변을 수정했습니다.',
         ),
     );
-  } catch (err) {
-    res.status(400).json(Failure(error, 'INVALID_PARAMETER', -1));
+  } catch (error) {
+    console.error(error);
+    res.status(400).json(Failure(error.message, 'INVALID_PARAMETER', -1));
   }
 };
 
 export const deleteComment = async (req, res, next) => {
   const {commentId} = req.params;
   const userId = req.user.id;
-  const comment = await commentService.getComment({commentId});
+  const comment = await commentService.getComment({commentId, userId});
 
   if (comment === null) {
     return res.status(400).json(Failure(
@@ -104,10 +106,10 @@ export const deleteComment = async (req, res, next) => {
           -1,
       ));
     }
-    return res.status(204).json(
+    return res.status(200).json(
         Success(true, 'SUCCESS_DELETE_COMMENT', '성공적으로 답변을 삭제했습니다.'),
     );
-  } catch (err) {
+  } catch (error) {
     return res.status(400).json(UnExpectedError(error));
   }
 };
@@ -123,7 +125,7 @@ export const getCommentsByUserId = async (req, res, next) => {
             '성공적으로 내 답변 목록을 조회했습니다.',
         ),
     );
-  } catch (err) {
+  } catch (error) {
     return res.status(400).json(UnExpectedError(error));
   }
 };
@@ -136,11 +138,21 @@ export const postCommnerLike = async (req, res, next) => {
     return res.status(201).json(
         Success(
             true,
-            'SUCCESS_LIKE_COUNSELING_COMMENT',
+            'SUCCESS_CREATE_COUNSELING_COMMENT_LIKE',
             '성공적으로 답변 좋아요를 눌렀습니다.',
         ),
     );
-  } catch (err) {
+  } catch (error) {
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return res.status(201).json(
+          Success(
+              true,
+              'SUCCESS_CREATE_COUNSELING_COMMENT_LIKE',
+              '성공적으로 고민 좋아요를 눌렀습니다.',
+          ),
+      );
+    }
+
     return res.status(400).json(UnExpectedError(error));
   }
 };
@@ -150,14 +162,14 @@ export const deleteCommnerLike = async (req, res, next) => {
   const userId = req.user.id;
   try {
     await commentService.deleteCommnerLike(userId, commentId);
-    return res.status(204).json(
+    return res.status(200).json(
         Success(
             true,
             'SUCCESS_DELETE_COUNSELING_COMMENT_LIKE',
             '성공적으로 답변 좋아요를 취소했습니다.',
         ),
     );
-  } catch (err) {
+  } catch (error) {
     return res.status(400).json(UnExpectedError(error));
   }
 };

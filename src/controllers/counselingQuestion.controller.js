@@ -24,7 +24,7 @@ export const postQuestion = async (req, res, next) => {
         ),
     );
   } catch (error) {
-    res.status(400).json(Failure(error, 'INVALID_PARAMETER', -1));
+    res.status(400).json(Failure(error.message, 'INVALID_PARAMETER', -1));
   }
 };
 
@@ -71,6 +71,13 @@ export const getQuestion = async (req, res, next) => {
 
   try {
     const question = await questionService.getQuestion(questionId, req.user);
+
+    if (question.id === null) {
+      return res.status(400).json(
+          Failure('존재하지 않는 고민입니다.', 'NOT_FOUND_COUNSELING_QUESTION', -1),
+      );
+    }
+
     return res.status(200).json(
         Success(
             question,
@@ -103,10 +110,15 @@ export const putQuestion = async (req, res, next) => {
       );
     }
 
-    const getQuestion = await questionService.getQuestion(questionId);
-    return res.status(204).json(Success(getQuestion));
-  } catch (err) {
-    next(err);
+    const getQuestion = await questionService.getQuestion(questionId, req.user);
+    return res.status(200).json(Success(
+        getQuestion,
+        'SUCCESS_EDIT_QUESTION',
+        '성공적으로 고민을 수정했습니다.',
+    ));
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json(UnExpectedError(error));
   }
 };
 
@@ -122,7 +134,7 @@ export const deleteQuestion = async (req, res, next) => {
           Failure('존재하지 않는 고민입니다.', 'NOT_FOUND_COUNSELING_QUESTION', -1),
       );
     }
-    return res.status(204).json(
+    return res.status(200).json(
         Success(
             true,
             'SUCCESS_DELETE_COUNSELING_QUESTION',
@@ -163,6 +175,16 @@ export const postQuestionLike = async (req, res, next) => {
         ),
     );
   } catch (error) {
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return res.status(201).json(
+          Success(
+              true,
+              'SUCCESS_CREATE_COUNSELING_QUESTION_LIKE',
+              '성공적으로 고민 좋아요를 눌렀습니다.',
+          ),
+      );
+    }
+
     return res.status(400).json(UnExpectedError(error));
   }
 };
@@ -172,7 +194,7 @@ export const deleteQuestionLike = async (req, res, next) => {
   const userId = req.user.id;
   try {
     await questionService.deleteQuestionLike(userId, questionId);
-    return res.status(204).json(
+    return res.status(200).json(
         Success(
             true,
             'SUCCESS_DELETE_COUNSELING_QUESTION_LIKE',

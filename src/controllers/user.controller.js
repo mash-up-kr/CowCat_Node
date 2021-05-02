@@ -36,9 +36,24 @@ export const postSignUp = async (req, res, next) => {
     );
     jsonResult.data.dataValues.token = tokens;
 
-    res.status(201).json(Success(jsonResult));
+    res.status(201).json(jsonResult);
   } catch (error) {
-    res.status(400).json(Failure(error, 'INVALID_PARAMETER', -1));
+    if (error.name === 'Error') {
+      return res.status(400).json(
+          Failure(error.message, 'INVALID_PARAMETER', -1),
+      );
+    }
+
+    // Sequelize 오류 인 경우
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      if (error.errors[0].message === 'users.nickname must be unique') {
+        return res.status(400).json(
+            Failure('중복된 닉네임을 사용했습니다.', 'EXISTED_NICKNAME', -1),
+        );
+      }
+    }
+
+    res.status(400).json(UnExpectedError(error));
   }
 };
 
@@ -74,14 +89,30 @@ export const patchMyProfile = async (req, res, next) => {
     );
 
     // 생일년도-01-01 으로 바꿔주기 위해 Json 결과를 조작합니다.
-    const jsonResult = Success(updateUser);
+    const jsonResult = Success(
+        updateUser, 'SUCCESS_EDIT_PROFILE', '성공적으로 프로필을 수정했습니다.',
+    );
+
     jsonResult.data.dataValues.birthday = `${birthdayYear}-01-01`;
 
-    res.status(204).json(
-        Success(jsonResult, 'SUCCESS_EDIT_PROFILE', '성공적으로 프로필을 수정했습니다.'),
-    );
+    return res.status(200).json(jsonResult);
   } catch (error) {
-    res.status(400).json(Failure(error, 'INVALID_PARAMETER', -1));
+    if (error.name === 'Error') {
+      return res.status(400).json(
+          Failure(error.message, 'INVALID_PARAMETER', -1),
+      );
+    }
+
+    // Sequelize 오류 인 경우
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      if (error.errors[0].message === 'users.nickname must be unique') {
+        return res.status(400).json(
+            Failure('중복된 닉네임을 사용했습니다.', 'EXISTED_NICKNAME', -1),
+        );
+      }
+    }
+
+    res.status(400).json(UnExpectedError(error));
   }
 };
 
