@@ -20,7 +20,13 @@ export const postComment = async (req, res, next) => {
         ),
     );
   } catch (error) {
-    res.status(400).json(Failure(error.message, 'INVALID_PARAMETER', -1));
+    if (error.name === 'Error') {
+      return res.status(400).json(
+          Failure(error.message, 'INVALID_PARAMETER', -1),
+      );
+    }
+
+    res.status(400).json(UnExpectedError(error));
   }
 };
 
@@ -76,8 +82,13 @@ export const putComment = async (req, res, next) => {
         ),
     );
   } catch (error) {
-    console.error(error);
-    res.status(400).json(Failure(error.message, 'INVALID_PARAMETER', -1));
+    if (error.name === 'Error') {
+      return res.status(400).json(
+          Failure(error.message, 'INVALID_PARAMETER', -1),
+      );
+    }
+
+    res.status(400).json(UnExpectedError(error));
   }
 };
 
