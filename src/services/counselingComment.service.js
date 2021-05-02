@@ -6,7 +6,24 @@ const {CounselingComment, CounselingQuestion, User, CommentLike} = models;
 
 const ONE_DAY_SEC = 24 * 60 * 60 * 1000;
 
+const validateContent = (content) => {
+  if (typeof content !== 'string') {
+    throw new Error('문자열을 입력해주세요.');
+  }
+
+  if (content.length > 200 || content.length < 1) {
+    throw new Error('답변 내용은 최소 1자 이상 최대 200자 이하 입니다.');
+  }
+};
+
+const validateCommentWriter = (comment, userId) => {
+  if (comment.userId !== userId) {
+    throw new Error('답변 작성자가 아닙니다.');
+  }
+};
+
 export const postComment = async ({questionId, content, userId}) => {
+  validateContent(content);
   const result = await CounselingComment.create({
     content,
     counselingQuestionId: questionId,
@@ -31,30 +48,55 @@ export const getComments = async ({questionId, userId}) => {
   return comments;
 };
 
-export const getComment = async ({commentId}) => {
+export const getComment = async ({commentId, userId}) => {
   const comment = await CounselingComment.findOne({
-    where: {id: commentId},
+    where: {
+      id: commentId,
+      userId,
+    },
+    attributes: [
+      'id',
+      'content',
+      'userId',
+    ],
   });
-  await setCommentLikeInfo([comment]);
-  await setIsNew([comment]);
-  return [comment];
+
+  if (comment === null) {
+    return null;
+  }
+
+  const commentArr = [comment];
+  await setCommentLikeInfo(commentArr, userId);
+  await setIsNew(commentArr);
+
+  return commentArr[0];
 };
 
-export const putComment = async ({commentId, content, userId}) => {
+export const putComment = async ({comment, content, userId}) => {
+  validateContent(content);
+  validateCommentWriter(comment, userId);
+
   const [result] = await CounselingComment.update(
       {
         content,
       },
       {
-        where: {id: commentId, userId},
+        where: {
+          id: comment.id,
+          userId,
+        },
       },
   );
   return result;
 };
 
-export const deleteComment = async ({commentId, userId}) => {
+export const deleteComment = async ({comment, userId}) => {
+  validateCommentWriter(comment, userId);
   const result = await CounselingComment.destroy({
-    where: {id: commentId, userId},
+    where: {
+      id: comment.id,
+      userId,
+    },
   });
   return result;
 };
@@ -118,7 +160,6 @@ export const setCommentLikeInfo = async (comments, userId) => {
     comments[i].dataValues.liked = false;
     commentIdx.set(comments[i].id, i);
   }
-  console.log(commentIdx);
   const likeCounts = await CommentLike.findAll({
     where: {counselingCommentId: [...commentIdx.keys()]},
     attributes: [
@@ -147,8 +188,6 @@ export const setCommentLikeInfo = async (comments, userId) => {
 export const setIsNew = async (comments) => {
   const now = new Date();
   comments.forEach((comment) => {
-    console.log(comment);
-
     const targetTime = new Date(comment.dataValues.createdAt);
     // 24시간 기준으로 판별
     if (now - targetTime <= ONE_DAY_SEC) {

@@ -1,25 +1,27 @@
 import axios from 'axios';
-import sequelize from 'sequelize';
-const {Op} = sequelize;
+import db from '../models/sequelize.js';
+const {sequelize, Sequelize} = db;
+const {Op} = Sequelize;
 
 import Models from '../models/index.js';
 
 const {User, UserLocation} = Models;
 
-export const signUp = async (
-    snsId,
-    snsType,
-    nickname,
-    birthdayYear,
-    gender,
-    imageUrl,
-) => {
-  if (gender != 'M' && gender != 'F') {
+const validateNickname = (nickname) => {
+  if (!nickname || nickname.length > 10) {
+    throw new Error(`닉네임은 최소 1글자 이상 10글자까지입니다.`);
+  }
+};
+
+const validateGender = (gender) => {
+  if (!gender || (gender != 'M' && gender != 'F')) {
     throw new Error(`gender 필드는 'M'과 'F' 값 중 하나여야 합니다.`);
   }
+};
 
+const validateBirthdayYear = (birthdayYear) => {
   birthdayYear = String(birthdayYear);
-  if (birthdayYear.length != 4) {
+  if (!birthdayYear || birthdayYear.length != 4) {
     throw new Error(`birthdayYear 필드는 4자리 년도 형식이어야 합니다.`);
   }
 
@@ -29,7 +31,37 @@ export const signUp = async (
   if (birthdayYearInt > nowYear) {
     throw new Error(`birthdayYear 필드는 현재 년도보다 작거나 같아야 합니다.`);
   }
+};
 
+const validateImageUrl = (imageUrl) => {
+  if (!imageUrl) {
+    throw new Error(`imageUrl 필드가 존재하지 않습니다.`);
+  }
+};
+
+const validateLocation = (location) => {
+  if (!location) {
+    throw new Error(`위치 필드가 존재하지 않습니다.`);
+  }
+
+  if (!location.longitude || !location.latitude) {
+    throw new Error(`위치 필드가 존재하지 않습니다.`);
+  }
+};
+
+export const signUp = async (
+    snsId,
+    snsType,
+    nickname,
+    birthdayYear,
+    gender,
+    imageUrl,
+) => {
+  validateNickname(nickname);
+  validateGender(gender);
+  validateBirthdayYear(birthdayYear);
+
+  const birthdayYearInt = parseInt(birthdayYear, 10);
   const birthdayDate = new Date(birthdayYearInt, 0, 1, 0, 0, 0, 0);
 
   const createUser = await User.create({
@@ -53,66 +85,63 @@ export const editProfile = async (
     location,
 ) => {
   if (nickname !== null) {
+    validateNickname(nickname);
+
     user.nickname = nickname;
   }
 
   if (gender !== null) {
-    if (gender != 'M' && gender != 'F') {
-      throw new Error(`gender 필드는 'M'과 'F' 값 중 하나여야 합니다.`);
-    }
+    validateGender(gender);
 
     user.gender = gender;
   }
 
   if (birthdayYear !== null) {
-    birthdayYear = String(birthdayYear);
-
-    if (birthdayYear.length != 4) {
-      throw new Error(`birthdayYear 필드는 4자리 년도 형식이어야 합니다.`);
-    }
+    validateBirthdayYear(birthdayYear);
 
     const birthdayYearInt = parseInt(birthdayYear, 10);
-    const nowYear = new Date().getFullYear();
-
-    if (birthdayYearInt > nowYear) {
-      throw new Error(
-          `birthdayYear 필드는 현재 년도보다 작거나 같아야 합니다.`,
-      );
-    }
-
     const birthdayDate = new Date(birthdayYearInt, 0, 1, 0, 0, 0, 0);
     user.birthday = birthdayDate;
   }
 
   if (imageUrl !== null) {
+    validateImageUrl(imageUrl);
+
     user.imageUrl = imageUrl;
   }
 
-  if (location !== null) {
+  const t = await sequelize.transaction();
+
+  try {
+    validateLocation(location);
+
     const {latitude, longitude} = location;
 
-    if (user.userLocation === null) {
-      user.dataValues.userLocation = await user.createUserLocation({
+    if (user.hasLocation() === false) {
+      user.dataValues.location = await user.createLocation({
         longitude,
         latitude,
-      });
+      }, {transaction: t});
     } else {
-      user.userLocation.latitude = latitude;
-      user.userLocation.longitude = longitude;
-      await user.userLocation.save();
+      user.location.latitude = latitude;
+      user.location.longitude = longitude;
+      await user.location.save({transaction: t});
     }
-  }
 
-  const saveUser = await user.save();
-  return saveUser;
+    const saveUser = await user.save({transaction: t});
+
+    await t.commit();
+    return saveUser;
+  } catch (error) {
+    await t.rollback();
+    throw error;
+  }
 };
 
 export const isCreatableNickname = async (nickname) => {
-  if (nickname === '' || nickname === null) {
-    return false;
-  }
+  validateNickname(nickname);
 
-  const getNicknameUser = await User.findOne({
+  const getUserByNickname = await User.findOne({
     attributes: ['id'],
     where: {
       nickname: {
@@ -121,8 +150,7 @@ export const isCreatableNickname = async (nickname) => {
     },
   });
 
-  if (getNicknameUser !== null) {
-    // 닉네임 생성 불가능
+  if (getUserByNickname !== null) {
     return false;
   }
 
@@ -151,8 +179,12 @@ export const getUserBySnsAuth = async (snsId, snsType) => {
     include: [
       {
         model: UserLocation,
-        as: 'userLocation',
+        as: 'location',
         required: false,
+        attributes: [
+          'latitude',
+          'longitude',
+        ],
       },
     ],
   });
@@ -179,7 +211,7 @@ export const getUserById = async (userId) => {
     include: [
       {
         model: UserLocation,
-        as: 'userLocation',
+        as: 'location',
         required: false,
         attributes: ['id', 'latitude', 'longitude'],
       },
@@ -198,8 +230,8 @@ export const createUserBySnsAuth = async (snsId, snsType) => {
   return createUser;
 };
 
-export const getAddressFromLocation = async (userLocation) => {
-  const {longitude, latitude} = userLocation;
+export const getAddressFromLocation = async (location) => {
+  const {longitude, latitude} = location;
 
   const {data} = await axios.get(
       `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?input_coord=WGS84&output_coord=WGS84&x=${longitude}&y=${latitude}`,

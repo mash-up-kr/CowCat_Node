@@ -29,7 +29,13 @@ export const getKakaoCallback = async (req, res, next) => {
 
     const {access_token: accessToken} = result.data;
 
-    res.status(200).json(Success(accessToken));
+    res.status(200).json(
+        Success(
+            `Bearer ${accessToken}`,
+            'SUCCESS_GET_SNS_ACCESS_TOKEN',
+            '성공적으로 소셜 액세스 토큰 발급을 성공했습니다.',
+        ),
+    );
   } catch (err) {
     res.status(200).json(Failure(err));
   }
@@ -44,7 +50,7 @@ export const postLogin = async (req, res, next) => {
       return;
     }
 
-    const jsonResult = Success(getUser);
+    const jsonResult = Success(getUser, 'SUCCESS_SNS_LOGIN', '성공적으로 로그인했습니다.');
 
     // 토큰 정보를 같이 넣어줍니다.
     const tokens = await jsonwebtoken.createToken(
@@ -68,7 +74,9 @@ export const postRefreshToken = async (req, res, next) => {
 
     const accessToken = await jsonwebtoken.createAccessToken(req.user.id);
 
-    res.status(200).json(Success(accessToken));
+    res.status(201).json(
+        Success(accessToken, 'SUCCESS_JWT_TOKEN_CREATE', '성공적으로 토큰을 발급했습니다.'),
+    );
   } catch (error) {
     res.status(200).json(Failure('토큰 생성에 실패하였습니다.'));
   }
