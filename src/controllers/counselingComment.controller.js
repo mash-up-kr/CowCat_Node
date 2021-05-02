@@ -149,11 +149,11 @@ export const getCommentsByUserId = async (req, res, next) => {
   }
 };
 
-export const postCommnerLike = async (req, res, next) => {
+export const postCommentLike = async (req, res, next) => {
   const {commentId} = req.params;
   const userId = req.user.id;
   try {
-    await commentService.postCommnerLike(userId, commentId);
+    await commentService.postCommentLike(userId, commentId);
     return res
         .status(201)
         .json(
@@ -180,11 +180,11 @@ export const postCommnerLike = async (req, res, next) => {
   }
 };
 
-export const deleteCommnerLike = async (req, res, next) => {
+export const deleteCommentLike = async (req, res, next) => {
   const {commentId} = req.params;
   const userId = req.user.id;
   try {
-    await commentService.deleteCommnerLike(userId, commentId);
+    await commentService.deleteCommentLike(userId, commentId);
     return res
         .status(200)
         .json(
@@ -205,6 +205,6 @@ export default {
   putComment,
   deleteComment,
   getCommentsByUserId,
-  postCommnerLike,
-  deleteCommnerLike,
+  postCommentLike,
+  deleteCommentLike,
 };
