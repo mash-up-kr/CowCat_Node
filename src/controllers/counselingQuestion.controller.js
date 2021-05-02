@@ -38,6 +38,7 @@ export const getQuestions = async (req, res, next) => {
         Failure('현재 위치를 설정해 주세요.', 'NOT_FOUND_LOCATION', -1));
   }
 
+  console.log(category);
   try {
     const questions = await questionService.getQuestions(
         req.user,
@@ -99,7 +100,7 @@ export const getQuestion = async (req, res, next) => {
 export const putQuestion = async (req, res, next) => {
   const {questionId} = req.params;
   const {title, content, category, emotion} = req.body;
-
+  x;
   try {
     const questions = await questionService.putQuestion(
         req.user,
